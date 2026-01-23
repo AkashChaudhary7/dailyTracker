@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akash's CyberPulse Pro</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+        :root {
+            --bg: #020617;
+            --card: rgba(15, 23, 42, 0.7);
+            --neon-cyan: #00f2ff;
+            --neon-purple: #bc13fe;
+            --neon-pink: #ff00bd;
+            --text: #f8fafc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { 
+            background: var(--bg);
+            background-image: radial-gradient(at 0% 0%, rgba(188, 19, 254, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 242, 255, 0.1) 0px, transparent 50%);
+            color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 20px;
+        }
+
+        .app-container { width: 100%; max-width: 480px; animation: fadeIn 0.8s ease; }
+
+        /* --- Akash Header --- */
+        .user-header { margin-bottom: 25px; border-left: 4px solid var(--neon-cyan); padding-left: 15px; }
+        .user-name { font-family: 'Syncopate', sans-serif; font-size: 0.7rem; letter-spacing: 4px; color: var(--neon-cyan); opacity: 0.8; }
+        .app-logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
+
+        /* --- Weekly Heatmap --- */
+        .chart-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 25px; }
+        .heatmap { display: flex; justify-content: space-between; align-items: flex-end; height: 60px; gap: 8px; padding-top: 10px; }
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .bar { width: 100%; background: rgba(255,255,255,0.05); border-radius: 4px; transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-height: 4px; position: relative; }
+        .bar.active { background: linear-gradient(to top, var(--neon-purple), var(--neon-cyan)); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .day-label { font-size: 0.6rem; color: #475569; font-weight: 800; }
+
+        /* --- Badges --- */
+        .badge-row { display: flex; gap: 12px; margin-bottom: 25px; overflow-x: auto; padding: 5px; scrollbar-width: none; }
+        .badge { 
+            min-width: 60px; height: 60px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center; opacity: 0.2; filter: grayscale(1); transition: 0.5s;
+        }
+        .badge.unlocked { opacity: 1; filter: grayscale(0); border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); transform: scale(1.05); }
+
+        /* --- Task System --- */
+        .section-header { font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; color: #475569; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
+        .glass-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 12px; backdrop-filter: blur(10px); }
+        .task-row { display: flex; align-items: center; padding: 12px; border-radius: 14px; cursor: pointer; transition: 0.2s; margin-bottom: 4px; }
+        .task-row:hover { background: rgba(255,255,255,0.03); }
+        .checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .done .checkbox { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
+        .task-text { flex: 1; margin-left: 12px; font-weight: 600; font-size: 0.9rem; }
+        .done .task-text { text-decoration: line-through; color: #475569; }
+
+        /* --- Countdown Grid --- */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--neon-cyan); display: block; }
+
+        /* --- Floating Input --- */
+        .fab { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px;
+            background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 8px; display: flex; gap: 8px; backdrop-filter: blur(20px);
+        }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 0 10px; outline: none; }
+        .add-btn { background: white; color: black; border: none; padding: 8px 15px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="user-header">
+        <div class="user-name">AKASH CHAUDHARY</div>
+        <div class="app-logo">CyberPulse OS</div>
+    </header>
+
+    <div class="section-header">WEEKLY PERFORMANCE</div>
+    <div class="chart-box">
+        <div class="heatmap" id="heatmap">
+            </div>
+    </div>
+
+    <div class="badge-row" id="badge-container">
+        <div class="badge" id="b-1"><i data-lucide="zap"></i></div>
+        <div class="badge" id="b-2"><i data-lucide="flame"></i></div>
+        <div class="badge" id="b-3"><i data-lucide="award"></i></div>
+        <div class="badge" id="b-4"><i data-lucide="shield-check"></i></div>
+        <div class="badge" id="b-5"><i data-lucide="crown"></i></div>
+    </div>
+
+    <div class="section-header">TARGETS <span onclick="addCounter()" style="color:var(--neon-cyan); cursor:pointer">+ NEW</span></div>
+    <div class="grid" id="counter-list"></div>
+
+    <div class="section-header">DAILY RITUALS</div>
+    <div class="glass-box" id="ritual-list"></div>
+
+    <div class="section-header">DAILY QUESTS</div>
+    <div class="glass-box" id="quest-list"></div>
+
+    <div style="height: 100px;"></div>
+</div>
+
+<div class="fab">
+    <input type="text" id="main-input" placeholder="Add something new...">
+    <select id="type-select" style="background:#1e293b; border:none; color:white; border-radius:8px; font-size:0.7rem;">
+        <option value="rituals">Ritual</option>
+        <option value="quests">Quest</option>
+    </select>
+    <button class="add-btn" onclick="addNew()">+</button>
+</div>
+
+<script>
+    let db = JSON.parse(localStorage.getItem('akashOS_v2')) || {
+        rituals: [], quests: [], counters: [], streak: 0,
+        history: {}, // Format: { "2024-05-20": 5 } (date: count)
+        lastDate: new Date().toDateString()
+    };
+
+    function save() {
+        localStorage.setItem('akashOS_v2', JSON.stringify(db));
+        render();
+    }
+
+    function addNew() {
+        const input = document.getElementById('main-input');
+        const type = document.getElementById('type-select').value;
+        if (!input.value.trim()) return;
+        db[type].push({ id: Date.now(), text: input.value, done: false });
+        input.value = '';
+        save();
+    }
+
+    function addCounter() {
+        const t = prompt("Goal Name:");
+        const d = prompt("Date (YYYY-MM-DD):");
+        if(t && d) { db.counters.push({id: Date.now(), t, d}); save(); }
+    }
+
+    function toggle(type, id) {
+        const item = db[type].find(i => i.id === id);
+        item.done = !item.done;
+        
+        // Track History for Heatmap
+        const today = new Date().toISOString().split('T')[0];
+        db.history[today] = (db.history[today] || 0) + (item.done ? 1 : -1);
+        
+        if (db.rituals.every(r => r.done) && db.rituals.length > 0) {
+            confetti({ particleCount: 150, spread: 70, colors: ['#00f2ff', '#bc13fe'] });
+            db.streak++;
+        }
+        save();
+    }
+
+    function checkReset() {
+        const today = new Date().toDateString();
+        if (db.lastDate !== today) {
+            db.rituals.forEach(r => r.done = false);
+            db.quests = db.quests.filter(q => !q.done);
+            db.lastDate = today;
+            save();
+        }
+    }
+
+    function render() {
+        // Render Lists
+        const draw = (type, id) => {
+            document.getElementById(id).innerHTML = db[type].map(t => `
+                <div class="task-row ${t.done ? 'done' : ''}" onclick="toggle('${type}', ${t.id})">
+                    <div class="checkbox">${t.done ? '<i data-lucide="check" size="14"></i>' : ''}</div>
+                    <span class="task-text">${t.text}</span>
+                    <i data-lucide="trash-2" size="14" style="color:#ef4444" onclick="db['${type}']=db['${type}'].filter(x=>x.id!==${t.id});save()"></i>
+                </div>
+            `).join('');
+        };
+        draw('rituals', 'ritual-list');
+        draw('quests', 'quest-list');
+
+        // Render Counters
+        document.getElementById('counter-list').innerHTML = db.counters.map(c => `
+            <div class="stat-card" oncontextmenu="event.preventDefault(); db.counters=db.counters.filter(x=>x.id!==${c.id});save()">
+                <span class="stat-val">${Math.ceil((new Date(c.d)-new Date())/86400000)}</span>
+                <span style="font-size:0.6rem; color:#64748b; font-weight:800;">DAYS TO ${c.t.toUpperCase()}</span>
+            </div>
+        `).join('');
+
+        // Render Heatmap (Last 7 Days)
+        const heatmap = document.getElementById('heatmap');
+        heatmap.innerHTML = '';
+        for(let i=6; i>=0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            const count = db.history[dateStr] || 0;
+            const height = Math.min(count * 15, 100); // Scale bar height
+            heatmap.innerHTML += `
+                <div class="bar-container">
+                    <div class="bar ${count > 0 ? 'active' : ''}" style="height: ${height}%"></div>
+                    <span class="day-label">${d.toLocaleDateString('en', {weekday:'short'})[0]}</span>
+                </div>
+            `;
+        }
+
+        // Achievement Badges
+        if (db.streak >= 1) document.getElementById('b-1').classList.add('unlocked');
+        if (db.streak >= 3) document.getElementById('b-2').classList.add('unlocked');
+        if (db.rituals.length >= 5) document.getElementById('b-3').classList.add('unlocked');
+        if (Object.keys(db.history).length >= 7) document.getElementById('b-4').classList.add('unlocked');
+        
+        lucide.createIcons();
+    }
+
+    checkReset();
+    render();
+</script>
+
+</body>
+</html>
