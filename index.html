@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akash's CyberPulse Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Akash's CyberPulse Prime</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -14,212 +14,227 @@
             --card: rgba(15, 23, 42, 0.7);
             --neon-cyan: #00f2ff;
             --neon-purple: #bc13fe;
-            --neon-pink: #ff00bd;
+            --neon-red: #ff3e3e;
+            --neon-green: #39ff14;
             --text: #f8fafc;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { 
             background: var(--bg);
             background-image: radial-gradient(at 0% 0%, rgba(188, 19, 254, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 242, 255, 0.1) 0px, transparent 50%);
-            color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 20px;
+            color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 15px;
         }
 
-        .app-container { width: 100%; max-width: 480px; animation: fadeIn 0.8s ease; }
+        .app-container { width: 100%; max-width: 480px; animation: fadeIn 0.6s ease; }
 
-        /* --- Akash Header --- */
-        .user-header { margin-bottom: 25px; border-left: 4px solid var(--neon-cyan); padding-left: 15px; }
-        .user-name { font-family: 'Syncopate', sans-serif; font-size: 0.7rem; letter-spacing: 4px; color: var(--neon-cyan); opacity: 0.8; }
-        .app-logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
+        /* --- Rank Header --- */
+        .rank-header { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
+        .rank-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+        .rank-title { font-family: 'Syncopate'; font-size: 0.55rem; color: var(--neon-cyan); letter-spacing: 2px; }
+        .xp-val { font-size: 0.7rem; font-weight: 800; color: var(--neon-purple); }
+        .xp-bar-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); width: 0%; transition: width 1s ease; }
 
-        /* --- Weekly Heatmap --- */
-        .chart-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 25px; }
-        .heatmap { display: flex; justify-content: space-between; align-items: flex-end; height: 60px; gap: 8px; padding-top: 10px; }
-        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .bar { width: 100%; background: rgba(255,255,255,0.05); border-radius: 4px; transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-height: 4px; position: relative; }
-        .bar.active { background: linear-gradient(to top, var(--neon-purple), var(--neon-cyan)); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
-        .day-label { font-size: 0.6rem; color: #475569; font-weight: 800; }
+        .app-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* --- Dashboard --- */
+        .chart-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
+        .heatmap { display: flex; justify-content: space-between; align-items: flex-end; height: 60px; gap: 8px; }
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .bar { width: 100%; background: rgba(255,255,255,0.05); border-radius: 4px; transition: height 0.8s ease; min-height: 4px; }
+        .grid-view { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+        .cal-cell { aspect-ratio: 1; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.5rem; display: flex; align-items: center; justify-content: center; }
 
         /* --- Badges --- */
-        .badge-row { display: flex; gap: 12px; margin-bottom: 25px; overflow-x: auto; padding: 5px; scrollbar-width: none; }
-        .badge { 
-            min-width: 60px; height: 60px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: center; opacity: 0.2; filter: grayscale(1); transition: 0.5s;
-        }
-        .badge.unlocked { opacity: 1; filter: grayscale(0); border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.3); transform: scale(1.05); }
+        .badge-row { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 5px; scrollbar-width: none; }
+        .badge { min-width: 50px; height: 50px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; opacity: 0.2; transition: 0.5s; }
+        .badge.unlocked { opacity: 1; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
 
-        /* --- Task System --- */
-        .section-header { font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; color: #475569; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
-        .glass-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 12px; backdrop-filter: blur(10px); }
-        .task-row { display: flex; align-items: center; padding: 12px; border-radius: 14px; cursor: pointer; transition: 0.2s; margin-bottom: 4px; }
-        .task-row:hover { background: rgba(255,255,255,0.03); }
-        .checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .done .checkbox { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
-        .task-text { flex: 1; margin-left: 12px; font-weight: 600; font-size: 0.9rem; }
+        /* --- Tasks --- */
+        .section-header { font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; color: #475569; margin: 15px 0 8px 0; display: flex; justify-content: space-between; }
+        .glass-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 8px; margin-bottom: 15px; }
+        .task-row { display: flex; align-items: center; padding: 10px; border-radius: 12px; cursor: pointer; margin-bottom: 2px; }
+        .checkbox { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; }
+        .done .checkbox { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000; }
+        .task-text { flex: 1; margin-left: 10px; font-weight: 600; font-size: 0.85rem; }
         .done .task-text { text-decoration: line-through; color: #475569; }
 
-        /* --- Countdown Grid --- */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--neon-cyan); display: block; }
+        .shadow-active .task-text { filter: blur(6px); }
 
-        /* --- Floating Input --- */
-        .fab { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px;
-            background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-            padding: 8px; display: flex; gap: 8px; backdrop-filter: blur(20px);
-        }
-        input { flex: 1; background: transparent; border: none; color: white; padding: 0 10px; outline: none; }
-        .add-btn { background: white; color: black; border: none; padding: 8px 15px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        /* --- Input --- */
+        .fab { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px; display: flex; gap: 6px; backdrop-filter: blur(20px); z-index: 100; }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 0 12px; outline: none; font-size: 0.9rem; }
+        .type-toggle { background: #1e293b; color: var(--neon-cyan); border: none; padding: 0 10px; border-radius: 12px; font-size: 0.55rem; font-weight: 800; cursor: pointer; }
+        .add-btn { background: white; color: black; border: none; width: 40px; height: 40px; border-radius: 14px; font-weight: 800; }
+        
+        .btn-view { color: var(--neon-cyan); border: 1px solid var(--neon-cyan); padding: 2px 8px; border-radius: 6px; font-size: 0.5rem; font-weight: 800; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <header class="user-header">
-        <div class="user-name">AKASH CHAUDHARY</div>
-        <div class="app-logo">CyberPulse OS</div>
-    </header>
-
-    <div class="section-header">WEEKLY PERFORMANCE</div>
-    <div class="chart-box">
-        <div class="heatmap" id="heatmap">
-            </div>
+    <div class="rank-header">
+        <div class="rank-top">
+            <span class="rank-title" id="rank-name">SYSTEM NOVICE</span>
+            <span class="xp-val" id="xp-display">0 XP</span>
+        </div>
+        <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar"></div></div>
     </div>
 
-    <div class="badge-row" id="badge-container">
-        <div class="badge" id="b-1"><i data-lucide="zap"></i></div>
-        <div class="badge" id="b-2"><i data-lucide="flame"></i></div>
-        <div class="badge" id="b-3"><i data-lucide="award"></i></div>
-        <div class="badge" id="b-4"><i data-lucide="shield-check"></i></div>
-        <div class="badge" id="b-5"><i data-lucide="crown"></i></div>
+    <div class="app-logo">
+        <span>CyberPulse Prime</span>
+        <div style="display: flex; gap: 10px;">
+            <i data-lucide="eye" onclick="toggleShadow()" style="width:18px; color:#475569"></i>
+            <i data-lucide="download" onclick="exportLog()" style="width:18px; color:#475569"></i>
+        </div>
     </div>
 
-    <div class="section-header">TARGETS <span onclick="addCounter()" style="color:var(--neon-cyan); cursor:pointer">+ NEW</span></div>
-    <div class="grid" id="counter-list"></div>
+    <div class="badge-row">
+        <div class="badge" id="b-zap"><i data-lucide="zap"></i></div>
+        <div class="badge" id="b-flame"><i data-lucide="flame"></i></div>
+        <div class="badge" id="b-ghost"><i data-lucide="ghost"></i></div>
+        <div class="badge" id="b-shield"><i data-lucide="shield"></i></div>
+        <div class="badge" id="b-crown"><i data-lucide="crown"></i></div>
+    </div>
 
-    <div class="section-header">DAILY RITUALS</div>
-    <div class="glass-box" id="ritual-list"></div>
+    <div class="section-header">
+        <span><span id="view-lbl">7-DAY</span> EFFICIENCY <span id="eff-percent" style="color:var(--neon-cyan)">0%</span></span>
+        <span class="btn-view" onclick="toggleExtend()" id="extend-btn">EXTEND</span>
+    </div>
+    <div class="chart-box" id="viz-container"></div>
 
-    <div class="section-header">DAILY QUESTS</div>
+    <div class="section-header">
+        <span>DAILY PROTOCOLS</span>
+        <span style="color:var(--neon-purple); cursor:pointer;" onclick="resetDailies()">RESET</span>
+    </div>
+    <div class="glass-box" id="daily-list"></div>
+
+    <div class="section-header">CERTAIN QUESTS</div>
     <div class="glass-box" id="quest-list"></div>
 
     <div style="height: 100px;"></div>
 </div>
 
 <div class="fab">
-    <input type="text" id="main-input" placeholder="Add something new...">
-    <select id="type-select" style="background:#1e293b; border:none; color:white; border-radius:8px; font-size:0.7rem;">
-        <option value="rituals">Ritual</option>
-        <option value="quests">Quest</option>
-    </select>
-    <button class="add-btn" onclick="addNew()">+</button>
+    <input type="text" id="task-in" placeholder="New data input...">
+    <button class="type-toggle" id="type-btn" onclick="switchType()">DAILY</button>
+    <button class="add-btn" onclick="addTask()">+</button>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('akashOS_v2')) || {
-        rituals: [], quests: [], counters: [], streak: 0,
-        history: {}, // Format: { "2024-05-20": 5 } (date: count)
-        lastDate: new Date().toDateString()
+    let db = JSON.parse(localStorage.getItem('akash_prime_v9')) || {
+        dailies: [], quests: [], history: {}, shadow: false, isExtended: false, xp: 0
     };
+    let activeType = 'daily';
 
-    function save() {
-        localStorage.setItem('akashOS_v2', JSON.stringify(db));
-        render();
+    const RANKS = ["NOVICE", "TECHNICIAN", "COMMANDER", "SYSTEM OVERLORD"];
+
+    function save() { localStorage.setItem('akash_prime_v9', JSON.stringify(db)); render(); }
+
+    function switchType() {
+        activeType = activeType === 'daily' ? 'quest' : 'daily';
+        document.getElementById('type-btn').innerText = activeType.toUpperCase();
     }
 
-    function addNew() {
-        const input = document.getElementById('main-input');
-        const type = document.getElementById('type-select').value;
-        if (!input.value.trim()) return;
-        db[type].push({ id: Date.now(), text: input.value, done: false });
-        input.value = '';
-        save();
+    function addTask() {
+        const inp = document.getElementById('task-in');
+        if (!inp.value.trim()) return;
+        const target = activeType === 'daily' ? db.dailies : db.quests;
+        target.push({ id: Date.now(), text: inp.value, done: false });
+        inp.value = ''; updateHistory(); save();
     }
 
-    function addCounter() {
-        const t = prompt("Goal Name:");
-        const d = prompt("Date (YYYY-MM-DD):");
-        if(t && d) { db.counters.push({id: Date.now(), t, d}); save(); }
-    }
-
-    function toggle(type, id) {
-        const item = db[type].find(i => i.id === id);
+    function toggleTask(type, id) {
+        const list = type === 'daily' ? db.dailies : db.quests;
+        const item = list.find(t => t.id === id);
         item.done = !item.done;
-        
-        // Track History for Heatmap
-        const today = new Date().toISOString().split('T')[0];
-        db.history[today] = (db.history[today] || 0) + (item.done ? 1 : -1);
-        
-        if (db.rituals.every(r => r.done) && db.rituals.length > 0) {
-            confetti({ particleCount: 150, spread: 70, colors: ['#00f2ff', '#bc13fe'] });
-            db.streak++;
+        if(item.done) {
+            db.xp += 100;
+            confetti({ particleCount: 40, spread: 70, colors: ['#00f2ff', '#bc13fe'] });
+        } else {
+            db.xp = Math.max(0, db.xp - 100);
         }
-        save();
+        updateHistory(); save();
     }
 
-    function checkReset() {
-        const today = new Date().toDateString();
-        if (db.lastDate !== today) {
-            db.rituals.forEach(r => r.done = false);
-            db.quests = db.quests.filter(q => !q.done);
-            db.lastDate = today;
-            save();
-        }
+    function updateHistory() {
+        const today = new Date().toISOString().split('T')[0];
+        const total = db.dailies.length + db.quests.length;
+        const comp = db.dailies.filter(t => t.done).length + db.quests.filter(t => t.done).length;
+        db.history[today] = Math.round((comp / (total || 1)) * 100);
     }
+
+    function resetDailies() { db.dailies.forEach(t => t.done = false); save(); }
+    function toggleShadow() { db.shadow = !db.shadow; save(); }
+    function toggleExtend() { db.isExtended = !db.isExtended; save(); }
 
     function render() {
+        document.body.classList.toggle('shadow-active', db.shadow);
+        document.getElementById('extend-btn').innerText = db.isExtended ? "CLOSE" : "EXTEND";
+        document.getElementById('view-lbl').innerText = db.isExtended ? "30-DAY" : "7-DAY";
+
+        // Rank System
+        const rankIdx = Math.min(Math.floor(db.xp / 2000), RANKS.length - 1);
+        const nextLevelXP = (rankIdx + 1) * 2000;
+        const progress = (db.xp % 2000) / 2000 * 100;
+        document.getElementById('rank-name').innerText = "SYSTEM " + RANKS[rankIdx];
+        document.getElementById('xp-display').innerText = db.xp + " XP";
+        document.getElementById('xp-bar').style.width = progress + "%";
+
+        // Badges Logic
+        if(db.xp > 500) document.getElementById('b-zap').classList.add('unlocked');
+        if(db.history[new Date().toISOString().split('T')[0]] >= 100) document.getElementById('b-crown').classList.add('unlocked');
+        if(db.shadow) document.getElementById('b-ghost').classList.add('unlocked');
+
         // Render Lists
-        const draw = (type, id) => {
-            document.getElementById(id).innerHTML = db[type].map(t => `
-                <div class="task-row ${t.done ? 'done' : ''}" onclick="toggle('${type}', ${t.id})">
-                    <div class="checkbox">${t.done ? '<i data-lucide="check" size="14"></i>' : ''}</div>
+        const draw = (list, el, type) => {
+            document.getElementById(el).innerHTML = list.map(t => `
+                <div class="task-row ${t.done ? 'done' : ''}" onclick="toggleTask('${type}', ${t.id})">
+                    <div class="checkbox">${t.done ? '<i data-lucide="check" size="12"></i>' : ''}</div>
                     <span class="task-text">${t.text}</span>
-                    <i data-lucide="trash-2" size="14" style="color:#ef4444" onclick="db['${type}']=db['${type}'].filter(x=>x.id!==${t.id});save()"></i>
+                    <i data-lucide="x" size="14" style="color:#ef4444" onclick="event.stopPropagation(); db.${type==='daily'?'dailies':'quests'}=db.${type==='daily'?'dailies':'quests'}.filter(x=>x.id!==${t.id});save()"></i>
                 </div>
             `).join('');
         };
-        draw('rituals', 'ritual-list');
-        draw('quests', 'quest-list');
+        draw(db.dailies, 'daily-list', 'daily');
+        draw(db.quests, 'quest-list', 'quest');
 
-        // Render Counters
-        document.getElementById('counter-list').innerHTML = db.counters.map(c => `
-            <div class="stat-card" oncontextmenu="event.preventDefault(); db.counters=db.counters.filter(x=>x.id!==${c.id});save()">
-                <span class="stat-val">${Math.ceil((new Date(c.d)-new Date())/86400000)}</span>
-                <span style="font-size:0.6rem; color:#64748b; font-weight:800;">DAYS TO ${c.t.toUpperCase()}</span>
-            </div>
-        `).join('');
+        // Render Viz
+        const viz = document.getElementById('viz-container');
+        const limit = db.isExtended ? 30 : 7;
+        let totalEff = 0;
+        let html = db.isExtended ? '<div class="grid-view">' : '<div class="heatmap">';
 
-        // Render Heatmap (Last 7 Days)
-        const heatmap = document.getElementById('heatmap');
-        heatmap.innerHTML = '';
-        for(let i=6; i>=0; i--) {
+        for(let i = limit - 1; i >= 0; i--) {
             const d = new Date(); d.setDate(d.getDate() - i);
-            const dateStr = d.toISOString().split('T')[0];
-            const count = db.history[dateStr] || 0;
-            const height = Math.min(count * 15, 100); // Scale bar height
-            heatmap.innerHTML += `
-                <div class="bar-container">
-                    <div class="bar ${count > 0 ? 'active' : ''}" style="height: ${height}%"></div>
-                    <span class="day-label">${d.toLocaleDateString('en', {weekday:'short'})[0]}</span>
-                </div>
-            `;
+            const ds = d.toISOString().split('T')[0];
+            const eff = db.history[ds] || 0;
+            totalEff += eff;
+            let color = eff === 0 ? 'rgba(255,255,255,0.05)' : (eff < 50 ? 'var(--neon-red)' : 'var(--neon-cyan)');
+            if(!db.isExtended) {
+                html += `<div class="bar-container">
+                            <div class="bar" style="height:${Math.max(eff, 5)}%; background:${eff > 0 ? color : ''}"></div>
+                            <span style="font-size:0.5rem; color:#475569;">${d.toLocaleDateString('en',{weekday:'short'})[0]}</span>
+                         </div>`;
+            } else {
+                html += `<div class="cal-cell" style="background:${eff > 0 ? color + '22' : ''}; color:${color}">${d.getDate()}</div>`;
+            }
         }
-
-        // Achievement Badges
-        if (db.streak >= 1) document.getElementById('b-1').classList.add('unlocked');
-        if (db.streak >= 3) document.getElementById('b-2').classList.add('unlocked');
-        if (db.rituals.length >= 5) document.getElementById('b-3').classList.add('unlocked');
-        if (Object.keys(db.history).length >= 7) document.getElementById('b-4').classList.add('unlocked');
+        viz.innerHTML = html + '</div>';
+        document.getElementById('eff-percent').innerText = Math.round(totalEff / limit) + "%";
         
         lucide.createIcons();
     }
 
-    checkReset();
+    function exportLog() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+        const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "Akash_Prime_Data.json"); a.click();
+    }
+
     render();
 </script>
-
 </body>
 </html>
