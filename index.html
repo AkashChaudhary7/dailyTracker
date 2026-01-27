@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Akash's CyberPulse Prime</title>
+    <title>Akash Chaudhary | CyberPulse Zenith</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -15,7 +15,6 @@
             --neon-cyan: #00f2ff;
             --neon-purple: #bc13fe;
             --neon-red: #ff3e3e;
-            --neon-green: #39ff14;
             --text: #f8fafc;
         }
 
@@ -28,32 +27,37 @@
 
         .app-container { width: 100%; max-width: 480px; animation: fadeIn 0.6s ease; }
 
-        /* --- Rank Header --- */
-        .rank-header { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
-        .rank-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+        /* --- Rank & User Header --- */
+        .status-header { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 15px; }
+        .user-meta { font-family: 'Syncopate'; font-size: 0.5rem; color: #475569; letter-spacing: 3px; margin-bottom: 4px; }
+        .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rank-title { font-family: 'Syncopate'; font-size: 0.55rem; color: var(--neon-cyan); letter-spacing: 2px; }
-        .xp-val { font-size: 0.7rem; font-weight: 800; color: var(--neon-purple); }
-        .xp-bar-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); width: 0%; transition: width 1s ease; }
+        .target-timer { font-family: 'Syncopate'; font-size: 0.6rem; color: var(--neon-red); cursor: pointer; }
+        .xp-bar-bg { height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); width: 0%; transition: width 1s; }
 
-        .app-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* --- Dashboard --- */
-        .chart-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
-        .heatmap { display: flex; justify-content: space-between; align-items: flex-end; height: 60px; gap: 8px; }
-        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .bar { width: 100%; background: rgba(255,255,255,0.05); border-radius: 4px; transition: height 0.8s ease; min-height: 4px; }
-        .grid-view { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
-        .cal-cell { aspect-ratio: 1; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.5rem; display: flex; align-items: center; justify-content: center; }
+        /* --- Live Progress --- */
+        .directive-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 18px; margin-bottom: 20px; border-left: 3px solid var(--neon-cyan); position: relative; }
+        .directive-label { font-size: 0.5rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 4px; }
+        .daily-progress-text { font-size: 1.2rem; font-weight: 800; }
+        .header-actions { position: absolute; right: 12px; top: 12px; display: flex; gap: 10px; }
 
         /* --- Badges --- */
         .badge-row { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding: 5px; scrollbar-width: none; }
-        .badge { min-width: 50px; height: 50px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; opacity: 0.2; transition: 0.5s; }
+        .badge { min-width: 45px; height: 45px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; opacity: 0.15; transition: 0.5s; }
         .badge.unlocked { opacity: 1; border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
 
-        /* --- Tasks --- */
-        .section-header { font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; color: #475569; margin: 15px 0 8px 0; display: flex; justify-content: space-between; }
-        .glass-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 8px; margin-bottom: 15px; }
+        /* --- Dashboard --- */
+        .section-header { font-size: 0.55rem; font-weight: 800; letter-spacing: 2px; color: #475569; margin: 15px 0 8px 0; display: flex; justify-content: space-between; text-transform: uppercase; }
+        .chart-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; }
+        .heatmap { display: flex; justify-content: space-between; align-items: flex-end; height: 55px; gap: 8px; }
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .bar { width: 100%; background: rgba(255,255,255,0.05); border-radius: 3px; min-height: 4px; transition: height 0.8s; }
+        .grid-view { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+        .cal-cell { aspect-ratio: 1; border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.5rem; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+
+        /* --- Task Lists --- */
+        .glass-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 6px; }
         .task-row { display: flex; align-items: center; padding: 10px; border-radius: 12px; cursor: pointer; margin-bottom: 2px; }
         .checkbox { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; }
         .done .checkbox { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000; }
@@ -61,14 +65,15 @@
         .done .task-text { text-decoration: line-through; color: #475569; }
 
         .shadow-active .task-text { filter: blur(6px); }
+        .shadow-active .task-text:hover { filter: blur(0); }
 
-        /* --- Input --- */
-        .fab { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px; display: flex; gap: 6px; backdrop-filter: blur(20px); z-index: 100; }
-        input { flex: 1; background: transparent; border: none; color: white; padding: 0 12px; outline: none; font-size: 0.9rem; }
-        .type-toggle { background: #1e293b; color: var(--neon-cyan); border: none; padding: 0 10px; border-radius: 12px; font-size: 0.55rem; font-weight: 800; cursor: pointer; }
-        .add-btn { background: white; color: black; border: none; width: 40px; height: 40px; border-radius: 14px; font-weight: 800; }
-        
-        .btn-view { color: var(--neon-cyan); border: 1px solid var(--neon-cyan); padding: 2px 8px; border-radius: 6px; font-size: 0.5rem; font-weight: 800; }
+        /* --- Bottom Input --- */
+        .fab { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px; display: flex; gap: 6px; backdrop-filter: blur(20px); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 0 12px; outline: none; font-size: 0.85rem; }
+        .type-toggle { background: #1e293b; color: var(--neon-cyan); border: none; padding: 0 12px; border-radius: 12px; font-size: 0.55rem; font-weight: 800; cursor: pointer; }
+        .add-btn { background: white; color: black; border: none; width: 40px; height: 40px; border-radius: 14px; font-weight: 800; cursor: pointer; }
+
+        .btn-view { color: var(--neon-cyan); border: 1px solid var(--neon-cyan); padding: 2px 8px; border-radius: 6px; font-size: 0.5rem; font-weight: 800; cursor: pointer; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -76,39 +81,41 @@
 <body>
 
 <div class="app-container">
-    <div class="rank-header">
-        <div class="rank-top">
+    <div class="status-header">
+        <div class="user-meta">AKASH CHAUDHARY</div>
+        <div class="status-row">
             <span class="rank-title" id="rank-name">SYSTEM NOVICE</span>
-            <span class="xp-val" id="xp-display">0 XP</span>
+            <span class="target-timer" id="countdown" onclick="setTargetDate()">SET TARGET</span>
         </div>
         <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar"></div></div>
     </div>
 
-    <div class="app-logo">
-        <span>CyberPulse Prime</span>
-        <div style="display: flex; gap: 10px;">
-            <i data-lucide="eye" onclick="toggleShadow()" style="width:18px; color:#475569"></i>
-            <i data-lucide="download" onclick="exportLog()" style="width:18px; color:#475569"></i>
+    <div class="directive-box">
+        <div class="directive-label">DAILY SYSTEM LOAD</div>
+        <div class="daily-progress-text"><span id="live-percent">0</span>% <span style="font-size: 0.6rem; color: #475569; letter-spacing: 1px;">OPTIMIZED</span></div>
+        <div class="header-actions">
+            <i data-lucide="eye" onclick="toggleShadow()" style="width:18px; color:#475569; cursor:pointer"></i>
+            <i data-lucide="download" onclick="exportLog()" style="width:18px; color:#475569; cursor:pointer"></i>
         </div>
     </div>
 
     <div class="badge-row">
-        <div class="badge" id="b-zap"><i data-lucide="zap"></i></div>
-        <div class="badge" id="b-flame"><i data-lucide="flame"></i></div>
-        <div class="badge" id="b-ghost"><i data-lucide="ghost"></i></div>
-        <div class="badge" id="b-shield"><i data-lucide="shield"></i></div>
-        <div class="badge" id="b-crown"><i data-lucide="crown"></i></div>
+        <div class="badge" id="b-zap"><i data-lucide="zap" size="18"></i></div>
+        <div class="badge" id="b-target"><i data-lucide="crosshair" size="18"></i></div>
+        <div class="badge" id="b-flame"><i data-lucide="flame" size="18"></i></div>
+        <div class="badge" id="b-ghost"><i data-lucide="ghost" size="18"></i></div>
+        <div class="badge" id="b-crown"><i data-lucide="crown" size="18"></i></div>
     </div>
 
     <div class="section-header">
-        <span><span id="view-lbl">7-DAY</span> EFFICIENCY <span id="eff-percent" style="color:var(--neon-cyan)">0%</span></span>
+        <span><span id="view-lbl">7-DAY</span> FLOW <span id="avg-eff" style="color:var(--neon-cyan)">0%</span></span>
         <span class="btn-view" onclick="toggleExtend()" id="extend-btn">EXTEND</span>
     </div>
     <div class="chart-box" id="viz-container"></div>
 
     <div class="section-header">
         <span>DAILY PROTOCOLS</span>
-        <span style="color:var(--neon-purple); cursor:pointer;" onclick="resetDailies()">RESET</span>
+        <span onclick="resetDailies()" style="color:var(--neon-purple); cursor:pointer">RESET</span>
     </div>
     <div class="glass-box" id="daily-list"></div>
 
@@ -119,24 +126,35 @@
 </div>
 
 <div class="fab">
-    <input type="text" id="task-in" placeholder="New data input...">
+    <input type="text" id="task-in" placeholder="Execute protocol...">
     <button class="type-toggle" id="type-btn" onclick="switchType()">DAILY</button>
     <button class="add-btn" onclick="addTask()">+</button>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('akash_prime_v9')) || {
-        dailies: [], quests: [], history: {}, shadow: false, isExtended: false, xp: 0
+    let db = JSON.parse(localStorage.getItem('akash_final_os')) || {
+        dailies: [], quests: [], history: {}, shadow: false, isExtended: false, xp: 0, targetDate: null
     };
     let activeType = 'daily';
 
-    const RANKS = ["NOVICE", "TECHNICIAN", "COMMANDER", "SYSTEM OVERLORD"];
-
-    function save() { localStorage.setItem('akash_prime_v9', JSON.stringify(db)); render(); }
+    function save() { localStorage.setItem('akash_final_os', JSON.stringify(db)); render(); }
 
     function switchType() {
         activeType = activeType === 'daily' ? 'quest' : 'daily';
         document.getElementById('type-btn').innerText = activeType.toUpperCase();
+    }
+
+    function setTargetDate() {
+        const val = prompt("Enter Milestone Date (YYYY-MM-DD):", db.targetDate || "");
+        if(val) { db.targetDate = val; save(); }
+    }
+
+    function updateTarget() {
+        if(!db.targetDate) return;
+        const diff = new Date(db.targetDate) - new Date();
+        if(diff < 0) { document.getElementById('countdown').innerText = "DONE"; return; }
+        const d = Math.floor(diff / 86400000);
+        document.getElementById('countdown').innerText = `${d}D REMAINING`;
     }
 
     function addTask() {
@@ -153,9 +171,7 @@
         item.done = !item.done;
         if(item.done) {
             db.xp += 100;
-            confetti({ particleCount: 40, spread: 70, colors: ['#00f2ff', '#bc13fe'] });
-        } else {
-            db.xp = Math.max(0, db.xp - 100);
+            confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 }, colors: ['#00f2ff', '#bc13fe'] });
         }
         updateHistory(); save();
     }
@@ -173,41 +189,40 @@
 
     function render() {
         document.body.classList.toggle('shadow-active', db.shadow);
-        document.getElementById('extend-btn').innerText = db.isExtended ? "CLOSE" : "EXTEND";
-        document.getElementById('view-lbl').innerText = db.isExtended ? "30-DAY" : "7-DAY";
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayEff = db.history[todayStr] || 0;
+        document.getElementById('live-percent').innerText = todayEff;
+        
+        // XP & Ranks
+        const RANKS = ["NOVICE", "TECHNICIAN", "COMMANDER", "OVERLORD"];
+        const rankIdx = Math.min(Math.floor(db.xp / 2000), 3);
+        document.getElementById('rank-name').innerText = "RANK: " + RANKS[rankIdx];
+        document.getElementById('xp-bar').style.width = (db.xp % 2000) / 2000 * 100 + "%";
 
-        // Rank System
-        const rankIdx = Math.min(Math.floor(db.xp / 2000), RANKS.length - 1);
-        const nextLevelXP = (rankIdx + 1) * 2000;
-        const progress = (db.xp % 2000) / 2000 * 100;
-        document.getElementById('rank-name').innerText = "SYSTEM " + RANKS[rankIdx];
-        document.getElementById('xp-display').innerText = db.xp + " XP";
-        document.getElementById('xp-bar').style.width = progress + "%";
-
-        // Badges Logic
-        if(db.xp > 500) document.getElementById('b-zap').classList.add('unlocked');
-        if(db.history[new Date().toISOString().split('T')[0]] >= 100) document.getElementById('b-crown').classList.add('unlocked');
+        // Badges
+        if(todayEff >= 100) document.getElementById('b-crown').classList.add('unlocked');
+        if(db.xp > 1000) document.getElementById('b-zap').classList.add('unlocked');
+        if(db.targetDate) document.getElementById('b-target').classList.add('unlocked');
         if(db.shadow) document.getElementById('b-ghost').classList.add('unlocked');
 
-        // Render Lists
+        // Lists
         const draw = (list, el, type) => {
             document.getElementById(el).innerHTML = list.map(t => `
                 <div class="task-row ${t.done ? 'done' : ''}" onclick="toggleTask('${type}', ${t.id})">
                     <div class="checkbox">${t.done ? '<i data-lucide="check" size="12"></i>' : ''}</div>
                     <span class="task-text">${t.text}</span>
-                    <i data-lucide="x" size="14" style="color:#ef4444" onclick="event.stopPropagation(); db.${type==='daily'?'dailies':'quests'}=db.${type==='daily'?'dailies':'quests'}.filter(x=>x.id!==${t.id});save()"></i>
+                    <i data-lucide="trash-2" size="14" style="color:#ef4444" onclick="event.stopPropagation(); db.${type==='daily'?'dailies':'quests'}=db.${type==='daily'?'dailies':'quests'}.filter(x=>x.id!==${t.id});save()"></i>
                 </div>
             `).join('');
         };
         draw(db.dailies, 'daily-list', 'daily');
         draw(db.quests, 'quest-list', 'quest');
 
-        // Render Viz
+        // Dashboard Logic
         const viz = document.getElementById('viz-container');
         const limit = db.isExtended ? 30 : 7;
         let totalEff = 0;
         let html = db.isExtended ? '<div class="grid-view">' : '<div class="heatmap">';
-
         for(let i = limit - 1; i >= 0; i--) {
             const d = new Date(); d.setDate(d.getDate() - i);
             const ds = d.toISOString().split('T')[0];
@@ -216,22 +231,26 @@
             let color = eff === 0 ? 'rgba(255,255,255,0.05)' : (eff < 50 ? 'var(--neon-red)' : 'var(--neon-cyan)');
             if(!db.isExtended) {
                 html += `<div class="bar-container">
-                            <div class="bar" style="height:${Math.max(eff, 5)}%; background:${eff > 0 ? color : ''}"></div>
-                            <span style="font-size:0.5rem; color:#475569;">${d.toLocaleDateString('en',{weekday:'short'})[0]}</span>
-                         </div>`;
+                    <div class="bar" style="height:${Math.max(eff, 4)}%; background:${eff > 0 ? color : ''}"></div>
+                    <span style="font-size:0.45rem; color:#475569; margin-top:4px;">${d.toLocaleDateString('en',{weekday:'short'})[0]}</span>
+                </div>`;
             } else {
-                html += `<div class="cal-cell" style="background:${eff > 0 ? color + '22' : ''}; color:${color}">${d.getDate()}</div>`;
+                html += `<div class="cal-cell" style="background:${eff > 0 ? color + '22' : ''}; color:${color}; border-color:${eff > 0 ? color : 'rgba(255,255,255,0.05)'}">${d.getDate()}</div>`;
             }
         }
         viz.innerHTML = html + '</div>';
-        document.getElementById('eff-percent').innerText = Math.round(totalEff / limit) + "%";
+        document.getElementById('avg-eff').innerText = Math.round(totalEff / limit) + "%";
+        document.getElementById('view-lbl').innerText = db.isExtended ? "30-DAY" : "7-DAY";
+        document.getElementById('extend-btn').innerText = db.isExtended ? "CLOSE" : "EXTEND";
         
+        updateTarget();
         lucide.createIcons();
     }
 
     function exportLog() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-        const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "Akash_Prime_Data.json"); a.click();
+        const data = JSON.stringify(db);
+        const blob = new Blob([data], {type: 'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Akash_CyberPulse.json'; a.click();
     }
 
     render();
