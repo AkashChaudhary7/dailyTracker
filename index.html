@@ -16,6 +16,14 @@
             --neon-purple: #bc13fe;
             --neon-red: #ff3e3e;
             --text: #f8fafc;
+            --stealth-filter: none;
+        }
+
+        /* Stealth Mode Filter */
+        body.stealth-active {
+            filter: grayscale(1) contrast(1.1) brightness(0.7);
+            --neon-cyan: #94a3b8;
+            --neon-purple: #64748b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -23,18 +31,20 @@
             background: var(--bg);
             background-image: radial-gradient(at 0% 0%, rgba(188, 19, 254, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 242, 255, 0.1) 0px, transparent 50%);
             color: var(--text); min-height: 100vh; display: flex; justify-content: center; padding: 15px;
+            transition: filter 0.5s ease;
         }
 
         .app-container { width: 100%; max-width: 480px; animation: fadeIn 0.6s ease; }
 
         /* --- Rank & User Header --- */
         .status-header { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 15px; }
-        .user-meta { font-family: 'Syncopate'; font-size: 0.5rem; color: #475569; letter-spacing: 3px; margin-bottom: 4px; }
+        .user-meta { font-family: 'Syncopate'; font-size: 0.5rem; color: #475569; letter-spacing: 3px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .streak-count { color: var(--neon-red); letter-spacing: 1px; }
         .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .rank-title { font-family: 'Syncopate'; font-size: 0.55rem; color: var(--neon-cyan); letter-spacing: 2px; }
         .target-timer { font-family: 'Syncopate'; font-size: 0.6rem; color: var(--neon-red); cursor: pointer; }
         .xp-bar-bg { height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); width: 0%; transition: width 1s; }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); width: 0%; transition: width 0.5s; }
 
         /* --- Live Progress --- */
         .directive-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 18px; margin-bottom: 20px; border-left: 3px solid var(--neon-cyan); position: relative; }
@@ -53,19 +63,20 @@
         .heatmap { display: flex; justify-content: space-between; align-items: flex-end; height: 55px; gap: 8px; }
         .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .bar { width: 100%; background: rgba(255,255,255,0.05); border-radius: 3px; min-height: 4px; transition: height 0.8s; }
-        .grid-view { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+        .grid-view { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
         .cal-cell { aspect-ratio: 1; border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); font-size: 0.5rem; display: flex; align-items: center; justify-content: center; font-weight: 800; }
 
         /* --- Task Lists --- */
         .glass-box { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 6px; }
-        .task-row { display: flex; align-items: center; padding: 10px; border-radius: 12px; cursor: pointer; margin-bottom: 2px; }
+        .task-row { display: flex; align-items: center; padding: 10px; border-radius: 12px; cursor: pointer; margin-bottom: 2px; transition: background 0.2s; }
+        .task-row:hover { background: rgba(255,255,255,0.02); }
         .checkbox { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; }
         .done .checkbox { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000; }
         .task-text { flex: 1; margin-left: 10px; font-weight: 600; font-size: 0.85rem; }
         .done .task-text { text-decoration: line-through; color: #475569; }
 
-        .shadow-active .task-text { filter: blur(6px); }
-        .shadow-active .task-text:hover { filter: blur(0); }
+        /* Shadow Text effect */
+        .shadow-active .task-text:not(:hover) { filter: blur(6px); }
 
         /* --- Bottom Input --- */
         .fab { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px; display: flex; gap: 6px; backdrop-filter: blur(20px); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -82,7 +93,10 @@
 
 <div class="app-container">
     <div class="status-header">
-        <div class="user-meta">AKASH CHAUDHARY</div>
+        <div class="user-meta">
+            <span>AKASH CHAUDHARY</span>
+            <span class="streak-count" id="streak-val">STREAK: 0</span>
+        </div>
         <div class="status-row">
             <span class="rank-title" id="rank-name">SYSTEM NOVICE</span>
             <span class="target-timer" id="countdown" onclick="setTargetDate()">SET TARGET</span>
@@ -94,7 +108,7 @@
         <div class="directive-label">DAILY SYSTEM LOAD</div>
         <div class="daily-progress-text"><span id="live-percent">0</span>% <span style="font-size: 0.6rem; color: #475569; letter-spacing: 1px;">OPTIMIZED</span></div>
         <div class="header-actions">
-            <i data-lucide="eye" onclick="toggleShadow()" style="width:18px; color:#475569; cursor:pointer"></i>
+            <i data-lucide="ghost" onclick="toggleShadow()" id="ghost-toggle" style="width:18px; color:#475569; cursor:pointer"></i>
             <i data-lucide="download" onclick="exportLog()" style="width:18px; color:#475569; cursor:pointer"></i>
         </div>
     </div>
@@ -133,11 +147,14 @@
 
 <script>
     let db = JSON.parse(localStorage.getItem('akash_final_os')) || {
-        dailies: [], quests: [], history: {}, shadow: false, isExtended: false, xp: 0, targetDate: null
+        dailies: [], quests: [], history: {}, shadow: false, isExtended: false, xp: 0, targetDate: null, streak: 0
     };
     let activeType = 'daily';
 
-    function save() { localStorage.setItem('akash_final_os', JSON.stringify(db)); render(); }
+    function save() { 
+        localStorage.setItem('akash_final_os', JSON.stringify(db)); 
+        render(); 
+    }
 
     function switchType() {
         activeType = activeType === 'daily' ? 'quest' : 'daily';
@@ -162,36 +179,77 @@
         if (!inp.value.trim()) return;
         const target = activeType === 'daily' ? db.dailies : db.quests;
         target.push({ id: Date.now(), text: inp.value, done: false });
-        inp.value = ''; updateHistory(); save();
+        inp.value = ''; 
+        updateHistory(); 
+        save();
     }
 
     function toggleTask(type, id) {
         const list = type === 'daily' ? db.dailies : db.quests;
         const item = list.find(t => t.id === id);
-        item.done = !item.done;
-        if(item.done) {
+        
+        // Prevent XP Farming: Only add XP when going from UNDONE to DONE
+        if (!item.done) {
             db.xp += 100;
-            confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 }, colors: ['#00f2ff', '#bc13fe'] });
+            confetti({ particleCount: 40, spread: 70, origin: { y: 0.8 }, colors: ['#00f2ff', '#bc13fe'] });
+        } else {
+            db.xp = Math.max(0, db.xp - 100);
         }
-        updateHistory(); save();
+
+        item.done = !item.done;
+        updateHistory();
+        calculateStreak();
+        save();
     }
 
     function updateHistory() {
         const today = new Date().toISOString().split('T')[0];
         const total = db.dailies.length + db.quests.length;
         const comp = db.dailies.filter(t => t.done).length + db.quests.filter(t => t.done).length;
-        db.history[today] = Math.round((comp / (total || 1)) * 100);
+        db.history[today] = total === 0 ? 0 : Math.round((comp / total) * 100);
     }
 
-    function resetDailies() { db.dailies.forEach(t => t.done = false); save(); }
-    function toggleShadow() { db.shadow = !db.shadow; save(); }
-    function toggleExtend() { db.isExtended = !db.isExtended; save(); }
+    function calculateStreak() {
+        let count = 0;
+        let d = new Date();
+        while(true) {
+            let ds = d.toISOString().split('T')[0];
+            if((db.history[ds] || 0) >= 100) {
+                count++;
+                d.setDate(d.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        db.streak = count;
+    }
+
+    function resetDailies() { 
+        db.dailies.forEach(t => t.done = false); 
+        updateHistory();
+        save(); 
+    }
+
+    function toggleShadow() { 
+        db.shadow = !db.shadow; 
+        save(); 
+    }
+
+    function toggleExtend() { 
+        db.isExtended = !db.isExtended; 
+        save(); 
+    }
 
     function render() {
+        // Stealth Mode / Shadow Apply
+        document.body.classList.toggle('stealth-active', db.shadow);
         document.body.classList.toggle('shadow-active', db.shadow);
+        document.getElementById('ghost-toggle').style.color = db.shadow ? 'var(--neon-cyan)' : '#475569';
+
         const todayStr = new Date().toISOString().split('T')[0];
         const todayEff = db.history[todayStr] || 0;
         document.getElementById('live-percent').innerText = todayEff;
+        document.getElementById('streak-val').innerText = `STREAK: ${db.streak}`;
         
         // XP & Ranks
         const RANKS = ["NOVICE", "TECHNICIAN", "COMMANDER", "OVERLORD"];
@@ -200,18 +258,19 @@
         document.getElementById('xp-bar').style.width = (db.xp % 2000) / 2000 * 100 + "%";
 
         // Badges
-        if(todayEff >= 100) document.getElementById('b-crown').classList.add('unlocked');
-        if(db.xp > 1000) document.getElementById('b-zap').classList.add('unlocked');
-        if(db.targetDate) document.getElementById('b-target').classList.add('unlocked');
-        if(db.shadow) document.getElementById('b-ghost').classList.add('unlocked');
+        document.getElementById('b-crown').classList.toggle('unlocked', todayEff >= 100);
+        document.getElementById('b-zap').classList.toggle('unlocked', db.xp >= 1000);
+        document.getElementById('b-target').classList.toggle('unlocked', !!db.targetDate);
+        document.getElementById('b-ghost').classList.toggle('unlocked', db.shadow);
+        document.getElementById('b-flame').classList.toggle('unlocked', db.streak >= 3);
 
-        // Lists
+        // Render Lists
         const draw = (list, el, type) => {
             document.getElementById(el).innerHTML = list.map(t => `
                 <div class="task-row ${t.done ? 'done' : ''}" onclick="toggleTask('${type}', ${t.id})">
                     <div class="checkbox">${t.done ? '<i data-lucide="check" size="12"></i>' : ''}</div>
                     <span class="task-text">${t.text}</span>
-                    <i data-lucide="trash-2" size="14" style="color:#ef4444" onclick="event.stopPropagation(); db.${type==='daily'?'dailies':'quests'}=db.${type==='daily'?'dailies':'quests'}.filter(x=>x.id!==${t.id});save()"></i>
+                    <i data-lucide="trash-2" size="14" style="color:#ef4444; margin-left:10px" onclick="event.stopPropagation(); db.${type==='daily'?'dailies':'quests'}=db.${type==='daily'?'dailies':'quests'}.filter(x=>x.id!==${t.id}); updateHistory(); save()"></i>
                 </div>
             `).join('');
         };
@@ -220,15 +279,17 @@
 
         // Dashboard Logic
         const viz = document.getElementById('viz-container');
-        const limit = db.isExtended ? 30 : 7;
+        const limit = db.isExtended ? 28 : 7;
         let totalEff = 0;
         let html = db.isExtended ? '<div class="grid-view">' : '<div class="heatmap">';
+        
         for(let i = limit - 1; i >= 0; i--) {
             const d = new Date(); d.setDate(d.getDate() - i);
             const ds = d.toISOString().split('T')[0];
             const eff = db.history[ds] || 0;
             totalEff += eff;
             let color = eff === 0 ? 'rgba(255,255,255,0.05)' : (eff < 50 ? 'var(--neon-red)' : 'var(--neon-cyan)');
+            
             if(!db.isExtended) {
                 html += `<div class="bar-container">
                     <div class="bar" style="height:${Math.max(eff, 4)}%; background:${eff > 0 ? color : ''}"></div>
@@ -240,7 +301,7 @@
         }
         viz.innerHTML = html + '</div>';
         document.getElementById('avg-eff').innerText = Math.round(totalEff / limit) + "%";
-        document.getElementById('view-lbl').innerText = db.isExtended ? "30-DAY" : "7-DAY";
+        document.getElementById('view-lbl').innerText = db.isExtended ? "28-DAY" : "7-DAY";
         document.getElementById('extend-btn').innerText = db.isExtended ? "CLOSE" : "EXTEND";
         
         updateTarget();
@@ -248,11 +309,16 @@
     }
 
     function exportLog() {
-        const data = JSON.stringify(db);
+        const data = JSON.stringify(db, null, 2);
         const blob = new Blob([data], {type: 'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Akash_CyberPulse.json'; a.click();
+        const a = document.createElement('a'); 
+        a.href = URL.createObjectURL(blob); 
+        a.download = `CyberPulse_Log_${new Date().toISOString().split('T')[0]}.json`; 
+        a.click();
     }
 
+    // Initial Streak Check on Load
+    calculateStreak();
     render();
 </script>
 </body>
