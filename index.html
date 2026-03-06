@@ -18,34 +18,38 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--accent); min-height: 100vh; overflow-x: hidden; }
         
-        .app-container { width: 100%; max-width: 440px; margin: 0 auto; padding: 25px 20px 120px 20px; }
-        .screen { display: none; animation: slideIn 0.3s ease; }
+        .app-container { width: 100%; max-width: 440px; margin: 0 auto; padding: 25px 20px 140px 20px; }
+        .screen { display: none; animation: slideIn 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
         .screen.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- Cards & UI --- */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-bottom: 15px; position: relative; }
         .label { font-size: 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; display: block; }
-        .btn-prime { background: var(--accent); color: black; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
+        .btn-prime { background: var(--accent); color: black; border: none; padding: 14px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; transition: 0.2s; }
+        .btn-prime:active { transform: scale(0.97); }
         
+        /* --- Inputs --- */
+        input, select, textarea { width: 100%; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: white; outline: none; margin-bottom: 10px; font-size: 0.9rem; }
+        input:focus { border-color: var(--accent); }
+
         /* --- Exercise Module --- */
-        .log-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 10px; }
-        .log-input { background: var(--glass); border: 1px solid var(--border); border-radius: 8px; color: white; padding: 8px; text-align: center; font-size: 0.8rem; outline: none; }
-        .rest-active { color: var(--priority); font-family: 'JetBrains Mono'; font-weight: 800; }
+        .log-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 12px; }
+        .log-input { background: var(--glass); border: 1px solid var(--border); border-radius: 8px; color: white; padding: 10px; text-align: center; font-size: 0.8rem; outline: none; }
 
         /* --- Planner & Task --- */
-        .task-card { background: var(--glass); border: 1px solid var(--border); padding: 14px; border-radius: 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .task-card { background: var(--glass); border: 1px solid var(--border); padding: 16px; border-radius: 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; transition: 0.2s; }
         .task-card.done { opacity: 0.3; }
         .prio-high { border-left: 4px solid var(--priority); }
 
         /* --- Nav --- */
-        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(20px); border-radius: 28px; border: 1px solid var(--border); display: flex; justify-content: space-around; padding: 14px; z-index: 2000; }
-        .nav-item { color: var(--muted); cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--accent); transform: translateY(-3px); }
+        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(18, 18, 18, 0.9); backdrop-filter: blur(25px); border-radius: 30px; border: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .nav-item { color: var(--muted); cursor: pointer; padding: 12px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .nav-item.active { color: var(--accent); background: var(--glass); border-radius: 20px; transform: translateY(-2px); }
 
         /* --- Toast & Timer --- */
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--success); color: black; padding: 10px 20px; border-radius: 100px; font-weight: 800; font-size: 0.7rem; display: none; z-index: 9999; }
-        #rest-timer-overlay { position: fixed; top: 80px; right: 20px; background: var(--surface); padding: 10px 15px; border-radius: 15px; border: 1px solid var(--priority); display: none; z-index: 1000; }
+        #toast { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: var(--success); color: black; padding: 10px 25px; border-radius: 100px; font-weight: 800; font-size: 0.7rem; display: none; z-index: 9999; box-shadow: 0 5px 20px rgba(0,255,136,0.3); }
+        #rest-timer-overlay { position: fixed; top: 25px; right: 25px; background: var(--surface); padding: 10px 20px; border-radius: 15px; border: 1px solid var(--priority); display: none; z-index: 1000; box-shadow: 0 0 20px rgba(255,71,71,0.2); }
     </style>
 </head>
 <body>
@@ -54,28 +58,31 @@
 <div id="rest-timer-overlay">REST: <span id="timer-val">90</span>s</div>
 
 <div class="app-container">
-    <header style="margin-bottom: 25px;">
-        <h1 style="font-weight: 800; text-transform: uppercase; font-size: 1.1rem; border-left: 3px solid white; padding-left: 10px;">Akash Chaudhary</h1>
-        <div id="sys-status" style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: var(--muted); margin-top: 5px;">ZENITH OS • ACTIVE</div>
+    <header style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="font-weight: 800; text-transform: uppercase; font-size: 1.1rem; border-left: 3px solid white; padding-left: 10px;">Akash Chaudhary</h1>
+            <div style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: var(--muted); margin-top: 5px; margin-left: 13px;">ZENITH OS • v7.2</div>
+        </div>
+        <div id="streak-val" style="font-size: 0.65rem; font-weight: 800; color: #ffbc00;">STREAK 0</div>
     </header>
 
     <div id="screen-dash" class="screen active">
         <div class="card" style="background: linear-gradient(135deg, #1a1a1a 0%, #050505 100%);">
             <span class="label">Total Net Worth</span>
-            <div style="font-size: 1.8rem; font-weight: 800;" id="val-networth">₹0.00</div>
-            <div style="height:4px; background:var(--border); border-radius:10px; margin: 15px 0;"><div id="xp-bar" style="height:100%; background:white; width:0%"></div></div>
+            <div style="font-size: 1.85rem; font-weight: 800;" id="val-networth">₹0.00</div>
+            <div style="height:4px; background:var(--border); border-radius:10px; margin: 20px 0;"><div id="xp-bar" style="height:100%; background:white; width:0%; transition: width 1s;"></div></div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="rank-name" style="font-family:'JetBrains Mono'; font-size:0.5rem; border:1px solid white; padding:2px 8px; border-radius:20px;">NOVICE</span>
-                <span id="streak-val" style="font-size: 0.65rem; font-weight:700; color: #ffbc00;">STREAK 0</span>
+                <span id="rank-name" style="font-family:'JetBrains Mono'; font-size:0.55rem; border:1px solid white; padding:3px 10px; border-radius:20px; letter-spacing: 1px;">NOVICE</span>
+                <span style="font-size: 0.65rem; color: var(--muted); font-weight: 600;" id="val-xp">0 XP</span>
             </div>
         </div>
 
         <div class="card">
-            <span class="label">Primary Objective: <span id="goal-title-disp">No Goal</span></span>
-            <div style="height:6px; background:var(--border); border-radius:10px; overflow:hidden; margin: 10px 0;">
-                <div id="goal-fill" style="height:100%; background:var(--success); width:0%; transition: 1s;"></div>
+            <span class="label">Primary Goal: <span id="goal-title-disp" style="color:white">Elite Goal</span></span>
+            <div style="height:8px; background:var(--border); border-radius:10px; overflow:hidden; margin: 12px 0;">
+                <div id="goal-fill" style="height:100%; background:var(--success); width:0%; transition: 1.2s ease-out;"></div>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:var(--muted)">
+            <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:var(--muted); font-weight: 700;">
                 <span id="goal-rem">Target: ₹0</span>
                 <span id="goal-perc">0%</span>
             </div>
@@ -90,63 +97,72 @@
     <div id="screen-planner" class="screen">
         <div class="card">
             <span class="label">New Protocol</span>
-            <input type="text" id="task-in" placeholder="Task (!!! for High Priority)" style="background:var(--glass); border:1px solid var(--border); border-radius:12px; width:100%; padding:12px; color:white; margin-bottom:10px; outline:none;">
-            <select id="task-type" style="background:var(--glass); border:1px solid var(--border); border-radius:12px; width:100%; padding:12px; color:white; margin-bottom:10px; outline:none;">
+            <input type="text" id="task-in" placeholder="Task Name (!!! for High Priority)">
+            <select id="task-type">
                 <option value="once">One-Time Quest</option>
                 <option value="daily">Daily Protocol (Auto-Reset)</option>
             </select>
-            <button onclick="addTask()" class="btn-prime">DEPLOY</button>
+            <button onclick="addTask()" class="btn-prime">DEPLOY SYSTEM</button>
         </div>
         <div id="task-list"></div>
     </div>
 
     <div id="screen-phys" class="screen">
         <div class="card">
-            <span class="label">Elite Exercise Logger</span>
-            <div id="exercise-hub">
-                </div>
+            <span class="label">Elite Workout Tracker</span>
+            <div id="exercise-hub"></div>
+        </div>
+        <div class="card">
+            <span class="label">Performance Notes</span>
+            <textarea id="phys-notes" rows="4" placeholder="Log sets, feelings, or warmups..." style="background: transparent; border: none; margin: 0; padding: 0;"></textarea>
         </div>
     </div>
 
     <div id="screen-wealth" class="screen">
         <div class="card">
-            <span class="label">Financial Sync</span>
-            <input type="number" id="in-stocks" placeholder="Stocks" class="log-input" style="width:100%; margin-bottom:10px;">
-            <input type="number" id="in-funds" placeholder="Mutual Funds" class="log-input" style="width:100%; margin-bottom:10px;">
-            <input type="number" id="in-cash" placeholder="Cash" class="log-input" style="width:100%; margin-bottom:10px;">
-            <input type="number" id="in-auto" placeholder="Monthly Auto-Save (₹)" class="log-input" style="width:100%; margin-bottom:10px;">
-            <button onclick="updateWealth()" class="btn-prime">SYNC ASSETS</button>
+            <span class="label">Asset Sync</span>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <small class="label" style="opacity: 0.5;">STOCKS</small>
+                <input type="number" id="in-stocks" class="log-input">
+                <small class="label" style="opacity: 0.5;">MUTUAL FUNDS</small>
+                <input type="number" id="in-funds" class="log-input">
+                <small class="label" style="opacity: 0.5;">CASH</small>
+                <input type="number" id="in-cash" class="log-input">
+                <small class="label" style="opacity: 0.5;">MONTHLY SAVINGS</small>
+                <input type="number" id="in-auto" class="log-input">
+            </div>
+            <button onclick="updateWealth()" class="btn-prime" style="margin-top: 15px;">SYNC ALL ASSETS</button>
         </div>
         <div class="card">
-            <span class="label">Set Primary Objective</span>
-            <input type="text" id="goal-title-in" placeholder="Objective Name" class="log-input" style="width:100%; margin-bottom:10px;">
-            <input type="number" id="goal-target-in" placeholder="Target Amount" class="log-input" style="width:100%; margin-bottom:10px;">
+            <span class="label">Financial Target</span>
+            <input type="text" id="goal-title-in" placeholder="Objective Name">
+            <input type="number" id="goal-target-in" placeholder="Target Amount">
             <button onclick="setGoal()" class="btn-prime" style="background:transparent; border:1px solid var(--border); color:white;">CONFIRM GOAL</button>
         </div>
     </div>
 
     <div id="screen-vault" class="screen">
         <div class="card">
-            <span class="label">Add Secure Occasion / Event</span>
-            <input type="text" id="mile-name" placeholder="Event Name" class="log-input" style="width:100%; margin-bottom:10px;">
-            <input type="date" id="mile-date" class="log-input" style="width:100%; margin-bottom:10px;">
-            <button onclick="addMilestone()" class="btn-prime">LOG EVENT</button>
+            <span class="label">Occasion Tracker</span>
+            <input type="text" id="mile-name" placeholder="Event Name">
+            <input type="date" id="mile-date">
+            <button onclick="addMilestone()" class="btn-prime">TRACK EVENT</button>
         </div>
         <div class="card" id="vault-auth">
-            <span class="label">Vault Encryption</span>
-            <input type="password" id="vault-pin" placeholder="Enter PIN (Default 1234)" class="log-input" style="width:100%; margin-bottom:10px;">
+            <span class="label">Vault Access</span>
+            <input type="password" id="vault-pin" placeholder="Security PIN">
             <button onclick="unlockVault()" class="btn-prime">DECRYPT</button>
         </div>
         <div id="vault-content" style="display:none" class="card">
-            <span class="label">Stored Credentials</span>
-            <textarea id="vault-data" rows="8" style="width:100%; background:transparent; border:none; color:white; outline:none;"></textarea>
-            <button onclick="lockVault()" class="btn-prime" style="margin-top:10px;">ENCRYPT & LOCK</button>
+            <span class="label">Private Stash</span>
+            <textarea id="vault-data" rows="10" style="background:transparent; border:none;"></textarea>
+            <button onclick="lockVault()" class="btn-prime">ENCRYPT & EXIT</button>
         </div>
     </div>
 </div>
 
 <nav class="nav-dock">
-    <div class="nav-item active" onclick="showScreen('dash', this)"><i data-lucide="layout"></i></div>
+    <div class="nav-item active" onclick="showScreen('dash', this)"><i data-lucide="layout-grid"></i></div>
     <div class="nav-item" onclick="showScreen('planner', this)"><i data-lucide="list-checks"></i></div>
     <div class="nav-item" onclick="showScreen('phys', this)"><i data-lucide="dumbbell"></i></div>
     <div class="nav-item" onclick="showScreen('wealth', this)"><i data-lucide="wallet"></i></div>
@@ -154,59 +170,72 @@
 </nav>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('akash_elite_final')) || {
+    let db = JSON.parse(localStorage.getItem('akash_zenith_v72')) || {
         tasks: [], milestones: [], xp: 0, streak: 0,
         wealth: { stocks: 0, funds: 0, cash: 0, auto: 0, lastMonth: new Date().getMonth() },
-        phys: { deadlift: [], squat: [], kegel: 0 },
-        goal: { title: "Elite Goal", target: 1 },
+        phys: { deadlift: [], squat: [], kegel: 0, notes: "" },
+        goal: { title: "Wealth Goal", target: 1 },
         vault: { data: "", pin: "1234" },
         lastDate: new Date().toLocaleDateString()
     };
 
     function notify(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000); }
-    function save() { localStorage.setItem('akash_elite_final', JSON.stringify(db)); render(); }
+    function save() { localStorage.setItem('akash_zenith_v72', JSON.stringify(db)); render(); }
 
-    // --- TEMPORAL ENGINE ---
-    function runResets() {
+    function runTemporalChecks() {
         const today = new Date().toLocaleDateString();
         if (db.lastDate !== today) {
             db.tasks.forEach(t => { if(t.type === 'daily') t.done = false; });
             db.lastDate = today;
-            notify("DAILY PROTOCOLS REFRESHED");
+            notify("NEW DAY: PROTOCOLS RESET");
         }
         if (db.wealth.lastMonth !== new Date().getMonth()) {
-            db.wealth.cash += db.wealth.auto;
+            db.wealth.cash += (db.wealth.auto || 0);
             db.wealth.lastMonth = new Date().getMonth();
-            notify("MONTHLY SAVINGS CREDITED");
+            notify("MONTHLY SYNC SUCCESSFUL");
         }
         save();
     }
 
-    // --- LOGIC ---
+    function showScreen(id, el) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        window.scrollTo(0,0);
+        lucide.createIcons();
+    }
+
+    // --- LOGIC FUNCTIONS ---
     function addTask() {
         const name = document.getElementById('task-in').value;
         const type = document.getElementById('task-type').value;
         if(!name) return;
         const prio = name.startsWith('!!!') ? 3 : 1;
         db.tasks.unshift({ id: Date.now(), text: name.replace('!!!',''), type, prio, done: false });
-        document.getElementById('task-in').value = ""; save(); notify("PROTOCOL LOGGED");
+        document.getElementById('task-in').value = ""; save(); notify("PROTOCOL ADDED");
     }
 
     function toggleTask(id) {
         const t = db.tasks.find(x => x.id === id);
         t.done = !t.done;
-        if(t.done) { db.xp += (t.prio * 100); confetti({ particleCount: 30 }); }
-        save();
+        if(t.done) { db.xp += (t.prio * 100); confetti({ particleCount: 30, origin: { y: 0.8 } }); }
+        save(); calculateStreak();
+    }
+
+    function calculateStreak() {
+        // Simple streak logic: if all daily tasks are done, streak increases (logic can be expanded)
+        const dailyTasks = db.tasks.filter(t => t.type === 'daily');
+        if(dailyTasks.length > 0 && dailyTasks.every(t => t.done)) db.streak++;
     }
 
     function logExercise(name) {
-        const sets = document.getElementById(`${name}-sets`).value;
-        const reps = document.getElementById(`${name}-reps`).value;
-        const weight = document.getElementById(`${name}-weight`).value;
-        db.phys[name].push({ date: new Date().toLocaleDateString(), sets, reps, weight });
-        db.xp += 200;
-        startRestTimer();
-        save(); notify(`${name.toUpperCase()} LOGGED ✓`);
+        const s = document.getElementById(`${name}-sets`).value;
+        const r = document.getElementById(`${name}-reps`).value;
+        const w = document.getElementById(`${name}-weight`).value;
+        if(!s || !r) return;
+        db.phys[name].push({ date: new Date().toLocaleDateString(), s, r, w });
+        db.xp += 200; startRestTimer(); save();
     }
 
     function startRestTimer() {
@@ -216,7 +245,7 @@
         overlay.style.display = 'block';
         const itv = setInterval(() => {
             time--; val.innerText = time;
-            if(time <= 0) { clearInterval(itv); overlay.style.display = 'none'; notify("REST PERIOD COMPLETE"); }
+            if(time <= 0) { clearInterval(itv); overlay.style.display = 'none'; notify("REST OVER: GO AGAIN"); }
         }, 1000);
     }
 
@@ -225,20 +254,20 @@
         db.wealth.funds = parseFloat(document.getElementById('in-funds').value) || 0;
         db.wealth.cash = parseFloat(document.getElementById('in-cash').value) || 0;
         db.wealth.auto = parseFloat(document.getElementById('in-auto').value) || 0;
-        save(); notify("WEALTH SYNCHRONIZED ✓");
+        save(); notify("WEALTH SYNCED ✓");
     }
 
     function setGoal() {
-        db.goal.title = document.getElementById('goal-title-in').value;
+        db.goal.title = document.getElementById('goal-title-in').value || "Wealth Goal";
         db.goal.target = parseFloat(document.getElementById('goal-target-in').value) || 1;
-        save();
+        save(); notify("GOAL SET");
     }
 
     function addMilestone() {
         const n = document.getElementById('mile-name').value;
         const d = document.getElementById('mile-date').value;
         if(n && d) db.milestones.push({ id: Date.now(), name: n, date: d });
-        save(); notify("EVENT SECURED");
+        save(); notify("MILESTONE TRACKED");
     }
 
     function unlockVault() { if(document.getElementById('vault-pin').value === db.vault.pin) { document.getElementById('vault-content').style.display = 'block'; document.getElementById('vault-auth').style.display = 'none'; } }
@@ -247,64 +276,69 @@
     function render() {
         const netWorth = db.wealth.stocks + db.wealth.funds + db.wealth.cash;
         document.getElementById('val-networth').innerText = "₹" + netWorth.toLocaleString('en-IN');
+        document.getElementById('val-xp').innerText = db.xp + " XP";
         document.getElementById('xp-bar').style.width = (db.xp % 2500) / 2500 * 100 + "%";
-        
-        // Goal Dash
+        document.getElementById('streak-val').innerText = "STREAK " + db.streak;
+
         document.getElementById('goal-title-disp').innerText = db.goal.title;
-        const perc = Math.min((netWorth / db.goal.target) * 100, 100);
-        document.getElementById('goal-fill').style.width = perc + "%";
-        document.getElementById('goal-perc').innerText = Math.round(perc) + "%";
+        const p = Math.min((netWorth / db.goal.target) * 100, 100);
+        document.getElementById('goal-fill').style.width = p + "%";
+        document.getElementById('goal-perc').innerText = p.toFixed(1) + "%";
         document.getElementById('goal-rem').innerText = "Target: ₹" + db.goal.target.toLocaleString();
+
+        const RANKS = ["NOVICE", "SPECIALIST", "COMMANDER", "ARCHITECT", "ELITE"];
+        document.getElementById('rank-name').innerText = RANKS[Math.min(Math.floor(db.xp / 2500), 4)];
 
         // Milestones
         document.getElementById('milestone-list').innerHTML = db.milestones.map(m => {
             const days = Math.ceil((new Date(m.date) - new Date()) / 86400000);
-            return `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:10px 0; border-bottom:1px solid var(--border)">
-                <span>${m.name}</span> <span style="color:var(--success)">${days < 0 ? 'PAST' : days + 'D'}</span>
-                <i data-lucide="trash-2" size="12" onclick="db.milestones=db.milestones.filter(x=>x.id!==${m.id});save()"></i>
+            return `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:12px 0; border-bottom:1px solid var(--border)">
+                <span style="font-weight:600">${m.name}</span> <span style="color:var(--success); font-weight:800">${days < 0 ? 'PAST' : days + 'D'}</span>
+                <i data-lucide="trash-2" size="14" style="color:var(--muted)" onclick="db.milestones=db.milestones.filter(x=>x.id!==${m.id});save()"></i>
             </div>`;
         }).join('');
 
         // Tasks
         document.getElementById('task-list').innerHTML = db.tasks.map(t => `
             <div class="task-card ${t.done ? 'done' : ''} ${t.prio === 3 ? 'prio-high' : ''}" onclick="toggleTask(${t.id})">
-                <div style="flex:1"><span style="font-weight:700;">${t.text}</span> ${t.type === 'daily' ? '<small style="color:var(--muted); margin-left:5px;">DAILY</small>' : ''}</div>
-                <i data-lucide="${t.done ? 'check-circle' : 'circle'}" size="18"></i>
-                <i data-lucide="x" size="12" style="margin-left:10px" onclick="event.stopPropagation(); db.tasks=db.tasks.filter(x=>x.id!==${t.id});save()"></i>
+                <div style="flex:1"><span style="font-weight:700; font-size:0.95rem;">${t.text}</span> ${t.type === 'daily' ? '<span style="font-size:0.5rem; background:white; color:black; padding:2px 5px; border-radius:4px; margin-left:8px; font-weight:800;">DAILY</span>' : ''}</div>
+                <i data-lucide="${t.done ? 'check-circle' : 'circle'}" size="20"></i>
+                <i data-lucide="x" size="14" style="margin-left:12px; color:var(--muted)" onclick="event.stopPropagation(); db.tasks=db.tasks.filter(x=>x.id!==${t.id});save()"></i>
             </div>
         `).join('');
 
         // Exercises
-        const ex = ['deadlift', 'squat'];
-        document.getElementById('exercise-hub').innerHTML = ex.map(k => `
+        document.getElementById('exercise-hub').innerHTML = ['deadlift', 'squat'].map(k => `
             <div style="margin-bottom:20px;">
-                <span class="label">${k.toUpperCase()} LOG</span>
+                <span class="label">${k.toUpperCase()}</span>
                 <div class="log-row">
-                    <input type="number" id="${k}-sets" placeholder="Sets" class="log-input">
-                    <input type="number" id="${k}-reps" placeholder="Reps" class="log-input">
+                    <input type="number" id="${k}-sets" placeholder="S" class="log-input">
+                    <input type="number" id="${k}-reps" placeholder="R" class="log-input">
                     <input type="number" id="${k}-weight" placeholder="Kg" class="log-input">
-                    <button class="btn-prime" style="width:40px;" onclick="logExercise('${k}')">+</button>
+                    <button class="btn-prime" style="width:40px; padding:0;" onclick="logExercise('${k}')"><i data-lucide="plus" size="16" style="margin:auto"></i></button>
                 </div>
             </div>
         `).join('') + `
-            <span class="label">KEGEL SESSIONS</span>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-weight:800;">TOTAL: ${db.phys.kegel}</span>
-                <button class="btn-prime" style="width:auto; padding:5px 15px;" onclick="db.phys.kegel++; db.xp+=50; save();">+ LOG SESSION</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                <span style="font-weight:800; font-size:0.9rem;">KEGEL SESSIONS: ${db.phys.kegel}</span>
+                <button class="btn-prime" style="width:auto; padding:8px 15px; font-size:0.7rem;" onclick="db.phys.kegel++; db.xp+=50; save();">+ LOG</button>
             </div>`;
 
+        document.getElementById('phys-notes').value = db.phys.notes;
+        document.getElementById('in-stocks').value = db.wealth.stocks;
+        document.getElementById('in-funds').value = db.wealth.funds;
+        document.getElementById('in-cash').value = db.wealth.cash;
+        document.getElementById('in-auto').value = db.wealth.auto;
+        document.getElementById('goal-title-in').value = db.goal.title;
+        document.getElementById('goal-target-in').value = db.goal.target;
+        document.getElementById('vault-data').value = db.vault.data;
+
         lucide.createIcons();
     }
 
-    function showScreen(id, el) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('screen-' + id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-        lucide.createIcons();
-    }
+    document.getElementById('phys-notes').addEventListener('input', (e) => { db.phys.notes = e.target.value; localStorage.setItem('akash_zenith_v72', JSON.stringify(db)); });
 
-    runResets(); render();
+    runTemporalChecks(); render();
 </script>
 </body>
 </html>
