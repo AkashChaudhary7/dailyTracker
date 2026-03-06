@@ -3,211 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Akash Chaudhary | Elite OS Apex</title>
+    <title>Akash Chaudhary | Elite OS Final</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
 
         :root {
-            --bg: #050505;
-            --surface: #121212;
-            --accent: #ffffff;
-            --muted: #666666;
-            --border: rgba(255, 255, 255, 0.08);
-            --glass: rgba(255, 255, 255, 0.03);
-            --priority: #ff4747;
-            --success: #00ff88;
+            --bg: #050505; --surface: #121212; --accent: #ffffff; --muted: #666666;
+            --border: rgba(255, 255, 255, 0.08); --glass: rgba(255, 255, 255, 0.03);
+            --priority: #ff4747; --success: #00ff88;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--accent); min-height: 100vh; display: flex; justify-content: center; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--accent); min-height: 100vh; overflow-x: hidden; }
         
-        .app-container { width: 100%; max-width: 440px; padding: 25px 20px 120px 20px; }
-        .screen { display: none; animation: screenScale 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .app-container { width: 100%; max-width: 440px; margin: 0 auto; padding: 25px 20px 120px 20px; }
+        .screen { display: none; animation: slideIn 0.3s ease; }
         .screen.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes screenScale { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        /* --- Header --- */
-        .header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .full-name { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; text-transform: uppercase; border-left: 3px solid var(--accent); padding-left: 10px; }
-
-        /* --- Cards --- */
+        /* --- Cards & UI --- */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-bottom: 15px; position: relative; }
-        .label { font-size: 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; }
+        .label { font-size: 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; display: block; }
+        .btn-prime { background: var(--accent); color: black; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
+        
+        /* --- Exercise Module --- */
+        .log-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 10px; }
+        .log-input { background: var(--glass); border: 1px solid var(--border); border-radius: 8px; color: white; padding: 8px; text-align: center; font-size: 0.8rem; outline: none; }
+        .rest-active { color: var(--priority); font-family: 'JetBrains Mono'; font-weight: 800; }
 
-        /* --- Task System --- */
-        .task-card { background: var(--glass); border: 1px solid var(--border); padding: 14px; border-radius: 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        /* --- Planner & Task --- */
+        .task-card { background: var(--glass); border: 1px solid var(--border); padding: 14px; border-radius: 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
         .task-card.done { opacity: 0.3; }
-        .task-card.high-p { border-left: 4px solid var(--priority); }
-        .badge-daily { font-family: 'JetBrains Mono'; font-size: 0.5rem; background: var(--accent); color: black; padding: 2px 6px; border-radius: 4px; font-weight: 800; }
+        .prio-high { border-left: 4px solid var(--priority); }
 
-        /* --- Inputs & UI Controls --- */
-        input, select, textarea { width: 100%; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: white; outline: none; margin-bottom: 12px; font-size: 0.85rem; }
-        .btn-action { background: var(--accent); color: black; border: none; padding: 14px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; transition: 0.2s; }
-        .btn-action:active { transform: scale(0.97); opacity: 0.8; }
-
-        /* --- Navigation --- */
-        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(18, 18, 18, 0.9); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 2000; }
-        .nav-item { color: var(--muted); transition: 0.3s; padding: 5px; cursor: pointer; }
+        /* --- Nav --- */
+        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(20px); border-radius: 28px; border: 1px solid var(--border); display: flex; justify-content: space-around; padding: 14px; z-index: 2000; }
+        .nav-item { color: var(--muted); cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--accent); transform: translateY(-3px); }
 
-        /* --- Feedback Toast --- */
-        #toast { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: var(--success); color: black; padding: 10px 25px; border-radius: 50px; font-weight: 800; font-size: 0.7rem; display: none; z-index: 9999; box-shadow: 0 10px 25px rgba(0,255,136,0.2); }
-
-        /* --- Progress Tracking --- */
-        .xp-bar-bg { height: 4px; background: var(--border); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .xp-bar-fill { height: 100%; background: var(--accent); transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        /* --- Toast & Timer --- */
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--success); color: black; padding: 10px 20px; border-radius: 100px; font-weight: 800; font-size: 0.7rem; display: none; z-index: 9999; }
+        #rest-timer-overlay { position: fixed; top: 80px; right: 20px; background: var(--surface); padding: 10px 15px; border-radius: 15px; border: 1px solid var(--priority); display: none; z-index: 1000; }
     </style>
 </head>
 <body>
 
-<div id="toast">SYSTEM UPDATED ✓</div>
+<div id="toast">SYSTEM SYNCED ✓</div>
+<div id="rest-timer-overlay">REST: <span id="timer-val">90</span>s</div>
 
 <div class="app-container">
-    <header class="header">
-        <h1 class="full-name">Akash Chaudhary</h1>
-        <div id="status-tag" style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: var(--muted);">OS: OPTIMIZED</div>
+    <header style="margin-bottom: 25px;">
+        <h1 style="font-weight: 800; text-transform: uppercase; font-size: 1.1rem; border-left: 3px solid white; padding-left: 10px;">Akash Chaudhary</h1>
+        <div id="sys-status" style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: var(--muted); margin-top: 5px;">ZENITH OS • ACTIVE</div>
     </header>
 
     <div id="screen-dash" class="screen active">
-        <div class="card" style="background: linear-gradient(135deg, #151515 0%, #050505 100%);">
+        <div class="card" style="background: linear-gradient(135deg, #1a1a1a 0%, #050505 100%);">
             <span class="label">Total Net Worth</span>
-            <div style="font-size: 1.8rem; font-weight: 800;" id="dash-networth">₹0.00</div>
-            <div class="xp-bar-bg"><div id="dash-xp-fill" class="xp-bar-fill"></div></div>
+            <div style="font-size: 1.8rem; font-weight: 800;" id="val-networth">₹0.00</div>
+            <div style="height:4px; background:var(--border); border-radius:10px; margin: 15px 0;"><div id="xp-bar" style="height:100%; background:white; width:0%"></div></div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="dash-rank" style="font-family:'JetBrains Mono'; font-size:0.5rem; border:1.5px solid white; padding:2px 10px; border-radius:20px;">ACCESSING...</span>
-                <span id="dash-streak" style="font-size: 0.65rem; font-weight:700; color: var(--priority);">STREAK 0</span>
+                <span id="rank-name" style="font-family:'JetBrains Mono'; font-size:0.5rem; border:1px solid white; padding:2px 8px; border-radius:20px;">NOVICE</span>
+                <span id="streak-val" style="font-size: 0.65rem; font-weight:700; color: #ffbc00;">STREAK 0</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="label">Primary Objective: <span id="goal-title-disp">No Goal</span></span>
+            <div style="height:6px; background:var(--border); border-radius:10px; overflow:hidden; margin: 10px 0;">
+                <div id="goal-fill" style="height:100%; background:var(--success); width:0%; transition: 1s;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:var(--muted)">
+                <span id="goal-rem">Target: ₹0</span>
+                <span id="goal-perc">0%</span>
             </div>
         </div>
 
         <div class="card">
             <span class="label">Priority Milestones</span>
-            <div id="dash-milestones"></div>
-        </div>
-
-        <div class="card">
-            <span class="label">Elite Scratchpad</span>
-            <textarea id="dash-notes" rows="3" placeholder="Log reminders..." style="background:transparent; border:none; margin:0; padding:0;"></textarea>
+            <div id="milestone-list"></div>
         </div>
     </div>
 
-    <div id="screen-os" class="screen">
+    <div id="screen-planner" class="screen">
         <div class="card">
-            <span class="label">Create New Protocol</span>
-            <input type="text" id="os-input" placeholder="Task Name (!!! for Priority)">
-            <div style="display:flex; gap:10px;">
-                <select id="os-type" style="flex:1">
-                    <option value="once">Once</option>
-                    <option value="daily">Daily Reset</option>
-                </select>
-                <button onclick="osAddTask()" class="btn-action" style="flex:0.5">ADD</button>
-            </div>
+            <span class="label">New Protocol</span>
+            <input type="text" id="task-in" placeholder="Task (!!! for High Priority)" style="background:var(--glass); border:1px solid var(--border); border-radius:12px; width:100%; padding:12px; color:white; margin-bottom:10px; outline:none;">
+            <select id="task-type" style="background:var(--glass); border:1px solid var(--border); border-radius:12px; width:100%; padding:12px; color:white; margin-bottom:10px; outline:none;">
+                <option value="once">One-Time Quest</option>
+                <option value="daily">Daily Protocol (Auto-Reset)</option>
+            </select>
+            <button onclick="addTask()" class="btn-prime">DEPLOY</button>
         </div>
-        <div id="os-task-list"></div>
+        <div id="task-list"></div>
     </div>
 
-    <div id="screen-events" class="screen">
+    <div id="screen-phys" class="screen">
         <div class="card">
-            <span class="label">Track Special Occasion</span>
-            <input type="text" id="ev-name" placeholder="Event Name">
-            <input type="date" id="ev-date">
-            <button onclick="evAdd()" class="btn-action">START COUNTDOWN</button>
+            <span class="label">Elite Exercise Logger</span>
+            <div id="exercise-hub">
+                </div>
         </div>
     </div>
 
     <div id="screen-wealth" class="screen">
         <div class="card">
-            <span class="label">Portfolio Update</span>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div><small class="label" style="opacity:0.5">STOCKS</small><input type="number" id="w-stocks"></div>
-                <div><small class="label" style="opacity:0.5">FUNDS</small><input type="number" id="w-funds"></div>
-                <div><small class="label" style="opacity:0.5">CASH</small><input type="number" id="w-cash"></div>
-                <div><small class="label" style="opacity:0.5">AUTO-SAVE</small><input type="number" id="w-auto"></div>
-            </div>
-            <button onclick="wSync()" class="btn-action">SYNC WEALTH</button>
+            <span class="label">Financial Sync</span>
+            <input type="number" id="in-stocks" placeholder="Stocks" class="log-input" style="width:100%; margin-bottom:10px;">
+            <input type="number" id="in-funds" placeholder="Mutual Funds" class="log-input" style="width:100%; margin-bottom:10px;">
+            <input type="number" id="in-cash" placeholder="Cash" class="log-input" style="width:100%; margin-bottom:10px;">
+            <input type="number" id="in-auto" placeholder="Monthly Auto-Save (₹)" class="log-input" style="width:100%; margin-bottom:10px;">
+            <button onclick="updateWealth()" class="btn-prime">SYNC ASSETS</button>
         </div>
         <div class="card">
-            <span class="label">Primary Goal</span>
-            <input type="text" id="g-name" placeholder="Goal Name">
-            <input type="number" id="g-target" placeholder="Target Amount">
-            <button onclick="gSet()" class="btn-action" style="background:transparent; border:1px solid var(--border); color:white;">SET OBJECTIVE</button>
+            <span class="label">Set Primary Objective</span>
+            <input type="text" id="goal-title-in" placeholder="Objective Name" class="log-input" style="width:100%; margin-bottom:10px;">
+            <input type="number" id="goal-target-in" placeholder="Target Amount" class="log-input" style="width:100%; margin-bottom:10px;">
+            <button onclick="setGoal()" class="btn-prime" style="background:transparent; border:1px solid var(--border); color:white;">CONFIRM GOAL</button>
         </div>
     </div>
 
-    <div id="screen-phys" class="screen">
+    <div id="screen-vault" class="screen">
         <div class="card">
-            <span class="label">Strength Training</span>
-            <div id="phys-list"></div>
+            <span class="label">Add Secure Occasion / Event</span>
+            <input type="text" id="mile-name" placeholder="Event Name" class="log-input" style="width:100%; margin-bottom:10px;">
+            <input type="date" id="mile-date" class="log-input" style="width:100%; margin-bottom:10px;">
+            <button onclick="addMilestone()" class="btn-prime">LOG EVENT</button>
         </div>
-        <div class="card" id="vault-lock">
+        <div class="card" id="vault-auth">
             <span class="label">Vault Encryption</span>
-            <input type="password" id="v-pin" placeholder="Enter PIN">
-            <button onclick="vUnlock()" class="btn-action">DECRYPT</button>
+            <input type="password" id="vault-pin" placeholder="Enter PIN (Default 1234)" class="log-input" style="width:100%; margin-bottom:10px;">
+            <button onclick="unlockVault()" class="btn-prime">DECRYPT</button>
         </div>
-        <div id="vault-unlocked" style="display:none">
-            <div class="card">
-                <span class="label">Secure Data</span>
-                <textarea id="v-data" rows="8"></textarea>
-                <button onclick="vLock()" class="btn-action">SAVE & ENCRYPT</button>
-            </div>
+        <div id="vault-content" style="display:none" class="card">
+            <span class="label">Stored Credentials</span>
+            <textarea id="vault-data" rows="8" style="width:100%; background:transparent; border:none; color:white; outline:none;"></textarea>
+            <button onclick="lockVault()" class="btn-prime" style="margin-top:10px;">ENCRYPT & LOCK</button>
         </div>
     </div>
 </div>
 
 <nav class="nav-dock">
-    <div class="nav-item active" onclick="navTo('dash', this)"><i data-lucide="layout"></i></div>
-    <div class="nav-item" onclick="navTo('os', this)"><i data-lucide="shield"></i></div>
-    <div class="nav-item" onclick="navTo('events', this)"><i data-lucide="calendar"></i></div>
-    <div class="nav-item" onclick="navTo('wealth', this)"><i data-lucide="wallet"></i></div>
-    <div class="nav-item" onclick="navTo('phys', this)"><i data-lucide="key"></i></div>
+    <div class="nav-item active" onclick="showScreen('dash', this)"><i data-lucide="layout"></i></div>
+    <div class="nav-item" onclick="showScreen('planner', this)"><i data-lucide="list-checks"></i></div>
+    <div class="nav-item" onclick="showScreen('phys', this)"><i data-lucide="dumbbell"></i></div>
+    <div class="nav-item" onclick="showScreen('wealth', this)"><i data-lucide="wallet"></i></div>
+    <div class="nav-item" onclick="showScreen('vault', this)"><i data-lucide="shield-lock"></i></div>
 </nav>
 
 <script>
-    // --- APP STATE ---
-    let db = JSON.parse(localStorage.getItem('akash_apex_os')) || {
+    let db = JSON.parse(localStorage.getItem('akash_elite_final')) || {
         tasks: [], milestones: [], xp: 0, streak: 0,
-        wealth: { stocks: 0, funds: 0, cash: 0, auto: 0, lastSyncMonth: new Date().getMonth() },
-        phys: { deadlift: 0, squat: 0, kegel: 0 },
-        goal: { title: "Unset", target: 1 },
+        wealth: { stocks: 0, funds: 0, cash: 0, auto: 0, lastMonth: new Date().getMonth() },
+        phys: { deadlift: [], squat: [], kegel: 0 },
+        goal: { title: "Elite Goal", target: 1 },
         vault: { data: "", pin: "1234" },
-        notes: "",
         lastDate: new Date().toLocaleDateString()
     };
 
-    function msg(t) {
-        const toast = document.getElementById('toast');
-        toast.innerText = t; toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 2000);
-    }
-
-    function save() {
-        localStorage.setItem('akash_apex_os', JSON.stringify(db));
-        render();
-    }
+    function notify(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000); }
+    function save() { localStorage.setItem('akash_elite_final', JSON.stringify(db)); render(); }
 
     // --- TEMPORAL ENGINE ---
-    function runTemporalChecks() {
+    function runResets() {
         const today = new Date().toLocaleDateString();
-        const now = new Date();
-        
         if (db.lastDate !== today) {
-            db.tasks.forEach(t => { if(t.repeat === 'daily') t.done = false; });
+            db.tasks.forEach(t => { if(t.type === 'daily') t.done = false; });
             db.lastDate = today;
-            msg("DAILY RESET COMPLETE");
+            notify("DAILY PROTOCOLS REFRESHED");
         }
-        
-        if (db.wealth.lastSyncMonth !== now.getMonth()) {
-            db.wealth.cash += (db.wealth.auto || 0);
-            db.wealth.lastSyncMonth = now.getMonth();
-            msg("MONTHLY SAVINGS CREDITED");
+        if (db.wealth.lastMonth !== new Date().getMonth()) {
+            db.wealth.cash += db.wealth.auto;
+            db.wealth.lastMonth = new Date().getMonth();
+            notify("MONTHLY SAVINGS CREDITED");
         }
         save();
     }
 
     // --- LOGIC ---
-    function navTo(id, el) {
+    function addTask() {
+        const name = document.getElementById('task-in').value;
+        const type = document.getElementById('task-type').value;
+        if(!name) return;
+        const prio = name.startsWith('!!!') ? 3 : 1;
+        db.tasks.unshift({ id: Date.now(), text: name.replace('!!!',''), type, prio, done: false });
+        document.getElementById('task-in').value = ""; save(); notify("PROTOCOL LOGGED");
+    }
+
+    function toggleTask(id) {
+        const t = db.tasks.find(x => x.id === id);
+        t.done = !t.done;
+        if(t.done) { db.xp += (t.prio * 100); confetti({ particleCount: 30 }); }
+        save();
+    }
+
+    function logExercise(name) {
+        const sets = document.getElementById(`${name}-sets`).value;
+        const reps = document.getElementById(`${name}-reps`).value;
+        const weight = document.getElementById(`${name}-weight`).value;
+        db.phys[name].push({ date: new Date().toLocaleDateString(), sets, reps, weight });
+        db.xp += 200;
+        startRestTimer();
+        save(); notify(`${name.toUpperCase()} LOGGED ✓`);
+    }
+
+    function startRestTimer() {
+        let time = 90;
+        const overlay = document.getElementById('rest-timer-overlay');
+        const val = document.getElementById('timer-val');
+        overlay.style.display = 'block';
+        const itv = setInterval(() => {
+            time--; val.innerText = time;
+            if(time <= 0) { clearInterval(itv); overlay.style.display = 'none'; notify("REST PERIOD COMPLETE"); }
+        }, 1000);
+    }
+
+    function updateWealth() {
+        db.wealth.stocks = parseFloat(document.getElementById('in-stocks').value) || 0;
+        db.wealth.funds = parseFloat(document.getElementById('in-funds').value) || 0;
+        db.wealth.cash = parseFloat(document.getElementById('in-cash').value) || 0;
+        db.wealth.auto = parseFloat(document.getElementById('in-auto').value) || 0;
+        save(); notify("WEALTH SYNCHRONIZED ✓");
+    }
+
+    function setGoal() {
+        db.goal.title = document.getElementById('goal-title-in').value;
+        db.goal.target = parseFloat(document.getElementById('goal-target-in').value) || 1;
+        save();
+    }
+
+    function addMilestone() {
+        const n = document.getElementById('mile-name').value;
+        const d = document.getElementById('mile-date').value;
+        if(n && d) db.milestones.push({ id: Date.now(), name: n, date: d });
+        save(); notify("EVENT SECURED");
+    }
+
+    function unlockVault() { if(document.getElementById('vault-pin').value === db.vault.pin) { document.getElementById('vault-content').style.display = 'block'; document.getElementById('vault-auth').style.display = 'none'; } }
+    function lockVault() { db.vault.data = document.getElementById('vault-data').value; document.getElementById('vault-content').style.display = 'none'; document.getElementById('vault-auth').style.display = 'block'; save(); }
+
+    function render() {
+        const netWorth = db.wealth.stocks + db.wealth.funds + db.wealth.cash;
+        document.getElementById('val-networth').innerText = "₹" + netWorth.toLocaleString('en-IN');
+        document.getElementById('xp-bar').style.width = (db.xp % 2500) / 2500 * 100 + "%";
+        
+        // Goal Dash
+        document.getElementById('goal-title-disp').innerText = db.goal.title;
+        const perc = Math.min((netWorth / db.goal.target) * 100, 100);
+        document.getElementById('goal-fill').style.width = perc + "%";
+        document.getElementById('goal-perc').innerText = Math.round(perc) + "%";
+        document.getElementById('goal-rem').innerText = "Target: ₹" + db.goal.target.toLocaleString();
+
+        // Milestones
+        document.getElementById('milestone-list').innerHTML = db.milestones.map(m => {
+            const days = Math.ceil((new Date(m.date) - new Date()) / 86400000);
+            return `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:10px 0; border-bottom:1px solid var(--border)">
+                <span>${m.name}</span> <span style="color:var(--success)">${days < 0 ? 'PAST' : days + 'D'}</span>
+                <i data-lucide="trash-2" size="12" onclick="db.milestones=db.milestones.filter(x=>x.id!==${m.id});save()"></i>
+            </div>`;
+        }).join('');
+
+        // Tasks
+        document.getElementById('task-list').innerHTML = db.tasks.map(t => `
+            <div class="task-card ${t.done ? 'done' : ''} ${t.prio === 3 ? 'prio-high' : ''}" onclick="toggleTask(${t.id})">
+                <div style="flex:1"><span style="font-weight:700;">${t.text}</span> ${t.type === 'daily' ? '<small style="color:var(--muted); margin-left:5px;">DAILY</small>' : ''}</div>
+                <i data-lucide="${t.done ? 'check-circle' : 'circle'}" size="18"></i>
+                <i data-lucide="x" size="12" style="margin-left:10px" onclick="event.stopPropagation(); db.tasks=db.tasks.filter(x=>x.id!==${t.id});save()"></i>
+            </div>
+        `).join('');
+
+        // Exercises
+        const ex = ['deadlift', 'squat'];
+        document.getElementById('exercise-hub').innerHTML = ex.map(k => `
+            <div style="margin-bottom:20px;">
+                <span class="label">${k.toUpperCase()} LOG</span>
+                <div class="log-row">
+                    <input type="number" id="${k}-sets" placeholder="Sets" class="log-input">
+                    <input type="number" id="${k}-reps" placeholder="Reps" class="log-input">
+                    <input type="number" id="${k}-weight" placeholder="Kg" class="log-input">
+                    <button class="btn-prime" style="width:40px;" onclick="logExercise('${k}')">+</button>
+                </div>
+            </div>
+        `).join('') + `
+            <span class="label">KEGEL SESSIONS</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:800;">TOTAL: ${db.phys.kegel}</span>
+                <button class="btn-prime" style="width:auto; padding:5px 15px;" onclick="db.phys.kegel++; db.xp+=50; save();">+ LOG SESSION</button>
+            </div>`;
+
+        lucide.createIcons();
+    }
+
+    function showScreen(id, el) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('screen-' + id).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -215,116 +304,7 @@
         lucide.createIcons();
     }
 
-    function osAddTask() {
-        const name = document.getElementById('os-input').value;
-        const type = document.getElementById('os-type').value;
-        if(!name) return;
-        const prio = name.startsWith('!!!') ? 3 : 1;
-        db.tasks.unshift({ id: Date.now(), text: name.replace('!!!',''), repeat: type, prio, done: false });
-        document.getElementById('os-input').value = "";
-        msg("PROTOCOL ADDED"); save();
-    }
-
-    function osToggle(id) {
-        const t = db.tasks.find(x => x.id === id);
-        t.done = !t.done;
-        if(t.done) {
-            db.xp += (t.prio * 100);
-            confetti({ particleCount: 30, origin: { y: 0.8 } });
-        }
-        save();
-    }
-
-    function evAdd() {
-        const n = document.getElementById('ev-name').value;
-        const d = document.getElementById('ev-date').value;
-        if(!n || !d) return;
-        db.milestones.push({ id: Date.now(), name: n, date: d });
-        document.getElementById('ev-name').value = "";
-        msg("EVENT TRACKED"); save();
-    }
-
-    function wSync() {
-        db.wealth.stocks = parseFloat(document.getElementById('w-stocks').value) || 0;
-        db.wealth.funds = parseFloat(document.getElementById('w-funds').value) || 0;
-        db.wealth.cash = parseFloat(document.getElementById('w-cash').value) || 0;
-        db.wealth.auto = parseFloat(document.getElementById('w-auto').value) || 0;
-        msg("WEALTH SYNCHRONIZED"); save();
-    }
-
-    function gSet() {
-        db.goal.title = document.getElementById('g-name').value;
-        db.goal.target = parseFloat(document.getElementById('g-target').value) || 1;
-        msg("GOAL UPDATED"); save();
-    }
-
-    function vUnlock() {
-        if(document.getElementById('v-pin').value === db.vault.pin) {
-            document.getElementById('vault-unlocked').style.display = 'block';
-            document.getElementById('vault-lock').style.display = 'none';
-        } else msg("WRONG PIN");
-    }
-    function vLock() {
-        db.vault.data = document.getElementById('v-data').value;
-        document.getElementById('vault-unlocked').style.display = 'none';
-        document.getElementById('vault-lock').style.display = 'block';
-        msg("VAULT SECURED"); save();
-    }
-
-    // --- RENDER ---
-    function render() {
-        const netWorth = db.wealth.stocks + db.wealth.funds + db.wealth.cash;
-        document.getElementById('dash-networth').innerText = "₹" + netWorth.toLocaleString('en-IN');
-        document.getElementById('dash-xp-fill').style.width = (db.xp % 2500) / 2500 * 100 + "%";
-        
-        const ranks = ["NOVICE", "SPECIALIST", "COMMANDER", "ARCHITECT", "ELITE"];
-        document.getElementById('dash-rank').innerText = ranks[Math.min(Math.floor(db.xp / 2500), 4)];
-
-        // Milestones
-        document.getElementById('dash-milestones').innerHTML = db.milestones.map(m => {
-            const diff = Math.ceil((new Date(m.date) - new Date()) / 86400000);
-            return `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.75rem;">
-                <span>${m.name}</span>
-                <span style="color:var(--success); font-weight:800;">${diff < 0 ? 'PAST' : diff + ' DAYS'}</span>
-                <i data-lucide="trash-2" size="12" style="cursor:pointer" onclick="db.milestones=db.milestones.filter(x=>x.id!==${m.id});save()"></i>
-            </div>`;
-        }).join('');
-
-        // Tasks
-        document.getElementById('os-task-list').innerHTML = db.tasks.map(t => `
-            <div class="task-card ${t.done ? 'done' : ''} ${t.prio === 3 ? 'high-p' : ''}" onclick="osToggle(${t.id})">
-                <div style="flex:1">
-                    <span style="font-weight:700; font-size:0.9rem;">${t.text}</span>
-                    ${t.repeat === 'daily' ? '<span class="badge-daily">DAILY</span>' : ''}
-                </div>
-                <i data-lucide="${t.done ? 'check-circle' : 'circle'}" size="18"></i>
-                <i data-lucide="x" size="12" style="margin-left:10px; color:var(--muted)" onclick="event.stopPropagation(); db.tasks=db.tasks.filter(x=>x.id!==${t.id});save()"></i>
-            </div>
-        `).join('');
-
-        // Exercises
-        document.getElementById('phys-list').innerHTML = ['deadlift', 'squat', 'kegel'].map(k => `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border)">
-                <span style="font-weight:800; text-transform:uppercase; font-size:0.7rem;">${k}</span>
-                <button onclick="db.phys['${k}']++; db.xp+=150; save();" class="btn-action" style="width:auto; padding:5px 15px; font-size:0.6rem;">LOG (${db.phys[k]})</button>
-            </div>
-        `).join('');
-
-        // Input Sync
-        document.getElementById('dash-notes').value = db.notes;
-        document.getElementById('w-stocks').value = db.wealth.stocks;
-        document.getElementById('w-funds').value = db.wealth.funds;
-        document.getElementById('w-cash').value = db.wealth.cash;
-        document.getElementById('w-auto').value = db.wealth.auto;
-        document.getElementById('v-data').value = db.vault.data;
-
-        lucide.createIcons();
-    }
-
-    document.getElementById('dash-notes').addEventListener('input', (e) => { db.notes = e.target.value; localStorage.setItem('akash_apex_os', JSON.stringify(db)); });
-
-    runTemporalChecks();
-    render();
+    runResets(); render();
 </script>
 </body>
 </html>
